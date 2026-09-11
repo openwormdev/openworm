@@ -3,8 +3,8 @@ import json
 import tempfile
 from pathlib import Path
 import numpy as np
-from wormstreet.brain import simulate
-from wormstreet.core import MODEL_CONFIG, READOUT, SENSORY
+from wormbrain.brain import simulate
+from wormbrain.core import MODEL_CONFIG, READOUT, SENSORY
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     inputs = [{n: (2.5 if n in {'ASEL', 'AWAL', 'AWAR'} else 0.0) for n in SENSORY},
               {n: (2.5 if n in {'ASER', 'ASHL', 'ASHR'} else 0.0) for n in SENSORY}]
     try:
-        with tempfile.TemporaryDirectory(prefix='wormstreet-comparison-') as folder:
+        with tempfile.TemporaryDirectory(prefix='wormbrain-comparison-') as folder:
             reference = simulate(inputs, Path(folder) / 'java', backend='jneuroml')
             exported = simulate(inputs, Path(folder) / 'neuron', backend='neuron')
         a,b=reference['traces'],exported['traces']

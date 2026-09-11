@@ -7,7 +7,7 @@ from .core import SCENARIOS
 
 
 def main():
-    parser = argparse.ArgumentParser(description="WormStreet — paper-only c302 laboratory")
+    parser = argparse.ArgumentParser(description="WormBrain — paper-only c302 laboratory")
     sub = parser.add_subparsers(dest="command", required=True)
     replay = sub.add_parser("replay", help="Run a real c302 reference replay")
     replay.add_argument("--scenario", choices=SCENARIOS, default="reversal")
@@ -18,7 +18,7 @@ def main():
     args = parser.parse_args()
     if args.command == "serve":
         import uvicorn
-        uvicorn.run("wormstreet.api:app", host="127.0.0.1", port=8000, access_log=False, proxy_headers=False)
+        uvicorn.run("wormbrain.api:app", host="127.0.0.1", port=8000, access_log=False, proxy_headers=False)
     elif args.command == "doctor":
         import importlib.metadata
         import shutil

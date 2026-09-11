@@ -2,7 +2,7 @@ import copy
 import math
 import unittest
 
-from wormstreet.core import PaperEngine, POLICY, SENSORY, digest, encode, features, neural_scores, scenario, validate_ticks, FORWARD, REVERSE
+from wormbrain.core import PaperEngine, POLICY, SENSORY, digest, encode, features, neural_scores, scenario, validate_ticks, FORWARD, REVERSE
 
 
 class CoreTests(unittest.TestCase):

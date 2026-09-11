@@ -30,5 +30,6 @@ test('all reference recordings have valid contracts and trusted file hashes',asy
 test('public page has controls and no third-party scripts or forms',async()=>{
   const html=await readFile('web/index.html','utf8');
   for(const id of ['play','reset','scrubber','export','import','worker-form'])assert.ok(html.includes(`id="${id}"`));
+  assert.ok(html.includes('WORMBRAIN'));assert.ok(!new RegExp(['worm','street'].join(''),'i').test(html));
   assert.ok(!/<script[^>]+src="https?:/i.test(html));assert.ok(!/action="https?:/i.test(html));
 });

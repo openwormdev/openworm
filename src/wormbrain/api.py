@@ -16,7 +16,7 @@ from pydantic import BaseModel, ConfigDict
 from .core import SCENARIOS
 from .replay import run_replay
 
-app = FastAPI(title="WormStreet paper worker", docs_url=None, redoc_url=None, openapi_url=None)
+app = FastAPI(title="WormBrain paper worker", docs_url=None, redoc_url=None, openapi_url=None)
 if os.getenv("WORM_REMOTE_MODE") == "1" and not os.getenv("WORM_WORKER_TOKEN"):
     raise RuntimeError("Remote mode requires a private worker token")
 origins = [x.strip() for x in os.getenv("WORM_ALLOWED_ORIGINS", "").split(",") if x.strip()]

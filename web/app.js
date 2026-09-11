@@ -71,7 +71,7 @@ $('scenario').addEventListener('change',loadScenario);
 $('play').addEventListener('click',()=>{if(timer){pause();return;}if(index===report.rows.length-1)index=0;$('play').textContent='Ⅱ Pause recording';timer=setInterval(()=>{index=Math.min(index+1,report.rows.length-1);render();if(index===report.rows.length-1)pause();},Number($('speed').value));render();});
 $('speed').addEventListener('change',pause);$('reset').addEventListener('click',()=>{pause();index=0;render();});
 $('scrubber').addEventListener('input',event=>{pause();index=Number(event.target.value);render();});
-$('export').addEventListener('click',()=>{if(!report)return;const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='wormstreet-paper-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+$('export').addEventListener('click',()=>{if(!report)return;const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='wormbrain-paper-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('import').addEventListener('change',async event=>{const file=event.target.files[0];if(!file)return;try{if(file.size>2_000_000)throw new Error('Maximum report size is 2 MB.');const value=validateReport(JSON.parse(await file.text()));++epoch;acceptReport(value,'Imported report · origin unverified');notice('Imported locally. Schema checked; simulation origin and authenticity are NOT verified. Nothing was uploaded.');}catch(error){notice(error.message,true);}finally{event.target.value='';}});
 let working=false;
 $('worker-form').addEventListener('submit',async event=>{

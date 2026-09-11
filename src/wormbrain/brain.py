@@ -36,7 +36,7 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
         duration = MODEL_CONFIG["warmup_ms"] + len(stimuli) * MODEL_CONFIG["episode_ms"]
         params = ParameterisedModel()
         params.set_bioparameter("unphysiological_offset_current", "0pA", "No hidden market stimulus", "0")
-        doc = c302.generate("WormStreet", params,
+        doc = c302.generate("WormBrain", params,
                             data_reader=MODEL_CONFIG["reader"], cells=None,
                             cells_to_plot=[], cells_to_stimulate=[], muscles_to_include=[],
                             duration=duration, dt=MODEL_CONFIG["dt_ms"], seed=MODEL_CONFIG["seed"],
@@ -52,15 +52,15 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
             delay = MODEL_CONFIG["warmup_ms"] + i * MODEL_CONFIG["episode_ms"] + MODEL_CONFIG["pulse_delay_ms"]
             for neuron, amplitude in sorted(frame.items()):
                 c302.add_new_input(doc, neuron, f"{delay}ms", f"{MODEL_CONFIG['pulse_duration_ms']}ms", f"{amplitude:.8f}pA", params)
-        nml = folder / "WormStreet.net.nml"
+        nml = folder / "WormBrain.net.nml"
         NeuroMLWriter.write(doc, str(nml))
         import xml.etree.ElementTree as ET
-        lems_path = folder / "LEMS_WormStreet.xml"
+        lems_path = folder / "LEMS_WormBrain.xml"
         lems_tree = ET.parse(lems_path)
         # Record selected cells only; all generated neurons still participate.
         for sim in lems_tree.getroot().iter("Simulation"):
             for output in list(sim.findall("OutputFile")):
-                if output.attrib.get("fileName") != "WormStreet.dat":
+                if output.attrib.get("fileName") != "WormBrain.dat":
                     sim.remove(output)
                 else:
                     for column in list(output):
@@ -76,7 +76,7 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
                 raise RuntimeError("Reference simulator exceeded its time limit") from exc
             if completed.returncode:
                 raise RuntimeError("Reference simulation or compilation failed; check local runtime dependencies")
-        java = ["java", "-Xmx1G", "-jar", jar, "LEMS_WormStreet.xml"]
+        java = ["java", "-Xmx1G", "-jar", jar, "LEMS_WormBrain.xml"]
         if backend == "jneuroml":
             checked(java + ["-nogui"], 900)
         else:
@@ -87,17 +87,17 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
             compiler_env = os.environ.copy()
             compiler_env.update(CC=shutil.which("gcc"), CXX=shutil.which("g++"))
             checked([str(compiler)], 120, env=compiler_env)
-            checked([sys.executable, "LEMS_WormStreet_nrn.py"], 120)
-        data = np.loadtxt(folder / "WormStreet.dat")
+            checked([sys.executable, "LEMS_WormBrain_nrn.py"], 120)
+        data = np.loadtxt(folder / "WormBrain.dat")
         if data.ndim != 2 or data.shape[1] != len(READOUT) + 1 or not np.isfinite(data).all():
             raise RuntimeError("Invalid or incomplete simulator traces")
         if data[-1, 0] * 1000 < duration - 2 * MODEL_CONFIG["dt_ms"]:
             raise RuntimeError("Simulation stopped before the requested horizon")
         # Resolve the actual LEMS column names; never assume sorted output order.
-        root = ET.parse(folder / "LEMS_WormStreet.xml").getroot()
+        root = ET.parse(folder / "LEMS_WormBrain.xml").getroot()
         columns = []
         for output in root.iter("OutputFile"):
-            if output.attrib.get("fileName") == "WormStreet.dat":
+            if output.attrib.get("fileName") == "WormBrain.dat":
                 columns = [c.attrib["quantity"].split("/")[0] for c in output.findall("OutputColumn")]
         if set(columns) != set(READOUT):
             raise RuntimeError("NeuroML output columns disagree with model populations")

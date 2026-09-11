@@ -4,7 +4,7 @@ export const SENSORY = ['ASEL', 'ASER', 'AWAL', 'AWAR', 'AWCL', 'AWCR', 'ASHL', 
 const finite = (x) => typeof x === 'number' && Number.isFinite(x);
 const hash = (x) => typeof x === 'string' && /^[a-f0-9]{64}$/.test(x);
 export function validateReport(r) {
-  const fail = () => { throw new Error('This file is not a supported WormStreet reference report.'); };
+  const fail = () => { throw new Error('This file is not a supported WormBrain reference report.'); };
   if (!r || r.schema_version !== 1 || r.trading_mode !== 'paper' || r.simulation_mode !== 'real-c302' || r.model?.kind !== 'c302-reference') fail();
   if (!['synthetic', 'user-provided-unverified'].includes(r.market_source) || !['trend','reversal','liquidity-shock','imported-replay'].includes(r.scenario)) fail();
   if (!hash(r.report_hash) || !hash(r.audit_root) || !hash(r.model.network_sha256) || !hash(r.model.jar_sha256)) fail();

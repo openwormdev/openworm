@@ -11,4 +11,4 @@ ENV MPLCONFIGDIR=/tmp/matplotlib
 ENV WORM_WEB_ROOT=/app/web
 ENV WORM_REMOTE_MODE=1
 EXPOSE 8000
-CMD ["python", "-m", "uvicorn", "wormstreet.api:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log", "--no-proxy-headers"]
+CMD ["python", "-m", "uvicorn", "wormbrain.api:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log", "--no-proxy-headers"]

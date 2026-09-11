@@ -12,7 +12,7 @@ def run_replay(name: str, *, ticks: list[dict] | None = None) -> dict:
     validate_ticks(observations)
     feature_frames = [features(observations, i) for i in range(len(observations))]
     inputs = [encode(frame) for frame in feature_frames]
-    with tempfile.TemporaryDirectory(prefix="wormstreet-") as folder:
+    with tempfile.TemporaryDirectory(prefix="wormbrain-") as folder:
         result = simulate(inputs, Path(folder))
     engine = PaperEngine()
     rows, previous = [], "genesis"

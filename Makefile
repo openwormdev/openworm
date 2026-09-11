@@ -8,11 +8,11 @@ test:
 build:
 	npm run build
 doctor:
-	PYTHONPATH=src $(PYTHON) -m wormstreet.cli doctor
+	PYTHONPATH=src $(PYTHON) -m wormbrain.cli doctor
 serve:
-	PYTHONPATH=src $(PYTHON) -m wormstreet.cli serve
+	PYTHONPATH=src $(PYTHON) -m wormbrain.cli serve
 recordings:
-	PYTHONPATH=src $(PYTHON) -m wormstreet.cli replay --scenario reversal --output web/data/reversal.json
-	PYTHONPATH=src $(PYTHON) -m wormstreet.cli replay --scenario trend --output web/data/trend.json
-	PYTHONPATH=src $(PYTHON) -m wormstreet.cli replay --scenario liquidity-shock --output web/data/liquidity-shock.json
+	PYTHONPATH=src $(PYTHON) -m wormbrain.cli replay --scenario reversal --output web/data/reversal.json
+	PYTHONPATH=src $(PYTHON) -m wormbrain.cli replay --scenario trend --output web/data/trend.json
+	PYTHONPATH=src $(PYTHON) -m wormbrain.cli replay --scenario liquidity-shock --output web/data/liquidity-shock.json
 	node scripts/recordings.mjs

@@ -3,8 +3,8 @@ import os
 import time
 import unittest
 from fastapi.testclient import TestClient
-from wormstreet.api import app, jobs
-from wormstreet.core import digest
+from wormbrain.api import app, jobs
+from wormbrain.core import digest
 
 
 @unittest.skipUnless(os.getenv('WORM_RUN_INTEGRATION') == '1', 'Set WORM_RUN_INTEGRATION=1 for the real model gate')

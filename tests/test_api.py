@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest.mock import patch
 from fastapi.testclient import TestClient
-from wormstreet.api import app, jobs
+from wormbrain.api import app, jobs
 
 
 class ApiTests(unittest.TestCase):
@@ -28,7 +28,7 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(self.client.post('/api/jobs',json={'scenario':'trend'}).status_code,429)
 
     def test_job_contract(self):
-        with patch('wormstreet.api.executor.submit') as submit:
+        with patch('wormbrain.api.executor.submit') as submit:
             response=self.client.post('/api/jobs',json={'scenario':'reversal'})
         self.assertEqual(response.status_code,202);submit.assert_called_once()
         identifier=response.json()['id']
