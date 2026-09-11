@@ -64,12 +64,16 @@ test('all reference recordings have valid contracts and trusted file hashes',asy
   assert.equal(live.frames.length,3);assert.equal(live.live_execution,false);assert.ok(live.model.neurons>10);
   assert.equal(live.model.reader,'cect.readers.Cook2019HermReader');assert.equal(live.plasticity_targets.length,7);
   assert.ok(live.frames.some(frame=>Object.values(frame.stimulus_pa).some(value=>value>0)));
+  assert.deepEqual(live.frames.map(frame=>frame.paper_tick.tick),[0,1,2]);
+  assert.ok(new Set(live.frames.map(frame=>frame.decoder.state)).size>1);
+  assert.ok(live.frames.some(frame=>frame.plasticity.applied_gain!==frame.plasticity.next_gain));
+  assert.ok(live.frames.every(frame=>frame.reasons.includes('UNVERIFIED_LIQUIDITY')&&frame.reasons.includes('UNVERIFIED_IMPACT')));
   for(const field of ['observed_at','latest_trade_at','session_started_at','ready_at','updated_at','stopped_at'])assert.ok(!liveRaw.includes(field));
 });
 test('public page has controls and no third-party scripts or forms',async()=>{
   const html=await readFile('web/index.html','utf8');
   const tokenUrl='https://www.ponsfamily.com/launchpad/0x2703295342C5914e0292ADFDB612618Ce24105d1';
-  for(const id of ['worm-specimen','hero-neurons','play','reset','scrubber','export','import','worker-form','live-start','live-stop','live-export','live-chart','live-decoder','live-plasticity','live-risk','rim-score','rib-score'])assert.ok(html.includes(`id="${id}"`));
+  for(const id of ['worm-specimen','hero-neurons','play','reset','scrubber','export','import','worker-form','live-start','live-stop','live-export','live-chart','live-decoder','live-plasticity','live-feedback','live-reasons','live-model-proof','live-timeline','live-replay','live-scrubber','live-frame-summary','live-risk','rim-score','rib-score'])assert.ok(html.includes(`id="${id}"`));
   for(const marker of ['specimen-hero','hero-wordmark','claims-section'])assert.ok(html.includes(marker));
   assert.ok(html.includes('class="token-nav"'));assert.equal(html.split(tokenUrl).length-1,2);
   assert.ok(html.includes('id="live-state" class="tag">CONNECTING</span>'));

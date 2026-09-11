@@ -53,6 +53,11 @@
       <p class="footnote live-intro">The observer follows the WORMBRAIN token on Robinhood Chain. New buys, sells, and price changes become calibrated sensory currents for the persistent c302 model. Command voltages become paper order intent, then the independent risk cage records fill or veto feedback. It has no wallet and cannot place real orders.</p>
       <div class="transport live-controls"><button id="live-start" class="primary">Watch real trades</button><button id="live-stop" disabled>Stop watching</button><button id="live-export" class="quiet" disabled>Export live audit</button></div>
       <p id="live-status" role="status" aria-live="polite" class="footnote live-status">Connecting to the WORMBRAIN public token feed. The optional Python worker runs the neural observer.</p>
+      <div id="live-timeline" class="observer-timeline" hidden>
+        <div class="observer-timeline-heading"><div><p class="eyebrow">PUBLISHED OBSERVER TIMELINE</p><strong id="live-frame-label">FRAME —</strong></div><button id="live-replay" class="quiet" type="button">▶ Replay observer run</button></div>
+        <div class="timeline"><span id="live-frame-time">T + 00:00</span><input id="live-scrubber" type="range" min="0" max="0" value="0" aria-label="Published observer frame"><span id="live-frame-count">— / —</span></div>
+        <p id="live-frame-summary" class="footnote">Loading the recorded market and neural state.</p>
+      </div>
       <div class="live-grid">
         <div class="live-market">
           <div class="mini-stats"><div>RECENT INDEXED TRADES<strong id="live-count">—</strong></div><div>RECENT BUYS / SELLS<strong id="live-sides">—</strong></div><div>PRICE IN GOOGL<strong id="live-price">—</strong></div></div>
@@ -60,9 +65,10 @@
           <div id="live-sensory" class="sensory-grid"></div>
         </div>
         <div class="live-neural">
-          <div class="mini-stats"><div>DECODER STATE<strong id="live-decoder">—</strong></div><div>FORWARD / REVERSE<strong><span id="live-forward">—</span> / <span id="live-reverse">—</span></strong></div><div>RIM / RIB<strong id="live-rim-rib">—</strong></div><div>ASE PATH GAIN<strong id="live-plasticity">—</strong></div><div>RISK / PAPER FILL<strong id="live-risk">—</strong></div><div>BRAIN TIME<strong id="live-time">—</strong></div></div>
+          <div class="mini-stats"><div>DECODER STATE<strong id="live-decoder">—</strong></div><div>FORWARD / REVERSE<strong><span id="live-forward">—</span> / <span id="live-reverse">—</span></strong></div><div>RIM / RIB<strong id="live-rim-rib">—</strong></div><div>ASE PATH GAIN<strong id="live-plasticity">—</strong></div><div>NEXT PVC / DVA<strong id="live-feedback">—</strong></div><div>RISK / PAPER FILL<strong id="live-risk">—</strong></div><div>RISK REASONS<strong id="live-reasons">—</strong></div><div>BRAIN TIME<strong id="live-time">—</strong></div></div>
           <svg id="live-chart" viewBox="0 0 560 180" role="img" aria-label="Latest live command-neuron voltages"></svg>
           <div class="legend"><span><i class="legend-forward"></i>AVB + PVC</span><span><i class="legend-reverse"></i>AVA + AVD + AVE</span></div>
+          <p id="live-model-proof" class="live-proof">Waiting for model identity.</p>
         </div>
       </div>
     </section>
