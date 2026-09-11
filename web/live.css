@@ -1,1 +1,201 @@
-.live-panel{margin:1.25rem 0;padding:1.5rem;border-color:#47715d}.live-controls{margin:1rem 0;flex-wrap:wrap}.live-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}.live-grid .mini-stats{padding-left:0;padding-right:0}.live-grid svg{width:100%;display:block}.live-grid .sensory-grid{margin-top:1rem}.live-panel a{color:#a5f4cb}@media(max-width:800px){.live-grid{grid-template-columns:1fr;gap:1rem}.live-panel{padding:1rem}.live-controls button{flex:1 1 auto}}
+/* Hallmark · macrostructure: restored WormBrain specimen · tone: technical editorial · anchor hue: ice blue */
+/* Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V5 */
+html,
+body {
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3 {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.live-panel {
+  margin: 0 0 32px;
+  border-color: var(--line2);
+}
+
+.live-heading {
+  align-items: flex-start;
+  padding-block: 28px 16px;
+}
+
+.live-heading h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(32px, 4.2vw, 58px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.live-heading-end {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.token-link {
+  color: var(--blue);
+  font: 10px var(--mono);
+  letter-spacing: 0.12em;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  white-space: nowrap;
+}
+
+.token-link:hover,
+.token-link:focus-visible,
+.token-link:active {
+  text-decoration-color: currentColor;
+}
+
+.live-intro {
+  max-width: 72ch;
+  padding-top: 0;
+}
+
+.live-controls {
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0 24px 20px;
+}
+
+.live-controls button {
+  min-height: 44px;
+}
+
+.live-status {
+  min-height: 52px;
+  margin: 0;
+  padding-top: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.live-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+}
+
+.live-grid > div {
+  min-width: 0;
+  padding: 0 24px 24px;
+}
+
+.live-grid > div + div {
+  border-left: 1px solid var(--line);
+}
+
+.live-grid .mini-stats {
+  padding: 20px 0 16px;
+  gap: 16px;
+}
+
+.live-grid .mini-stats > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.live-grid .mini-stats strong {
+  overflow-wrap: anywhere;
+}
+
+.live-grid .sensory-grid {
+  padding: 12px 0 0;
+}
+
+.live-grid .footnote {
+  min-height: 72px;
+  margin: 0;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.live-neural svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 8px;
+}
+
+.live-neural .legend {
+  padding: 8px 0 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .token-link:hover {
+    color: var(--green);
+  }
+}
+
+@media (max-width: 760px) {
+  .live-heading {
+    display: block;
+  }
+
+  .live-heading-end {
+    align-items: flex-start;
+    margin-top: 24px;
+  }
+
+  .live-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .live-grid > div + div {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .live-controls button {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 460px) {
+  .live-heading h2 {
+    font-size: 36px;
+  }
+
+  .live-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .live-controls button {
+    width: 100%;
+  }
+
+  .live-grid .mini-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .live-grid .mini-stats > div + div {
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+
+  .token-link {
+    font-size: 10px;
+  }
+}
+
+@media (pointer: coarse) {
+  .token-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .token-link {
+    transition: none;
+  }
+}

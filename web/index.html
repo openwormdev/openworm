@@ -1,69 +1,128 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Inspect a real c302 worm connectome responding to synthetic markets. Open, auditable, paper-only research.">
-  <meta name="color-scheme" content="dark"><meta name="referrer" content="no-referrer">
-  <title>WormBrain — Connectome trading laboratory</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/live.css">
-  <script type="module" src="/app.js"></script>
-  <script type="module" src="/live.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Watch a real c302 worm connectome respond to synthetic markets. Open, auditable, and paper-only.">
+  <meta name="color-scheme" content="dark">
+  <meta name="referrer" content="no-referrer">
+  <meta property="og:title" content="WormBrain — A connectome in the market">
+  <meta property="og:description" content="Market-shaped signals enter a real c302 model. Named command neurons decide. Every paper action is audited.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>WormBrain — A connectome in the market</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2306070a'/%3E%3Cpath d='M8 37c11-18 18 17 29-5S50 15 57 27' fill='none' stroke='%239eecff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./live.css">
+  <script type="module" src="./app.js"></script>
+  <script type="module" src="./live.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="/" aria-label="WormBrain home"><span class="brand-mark">w.</span><span>WORMBRAIN<small>C302 RESEARCH LABORATORY</small></span></a>
-    <nav aria-label="Primary navigation"><a href="#laboratory" class="active">Laboratory</a><a href="#model">Model & limits</a><a href="https://github.com/openwormdev/openworm" target="_blank" rel="noopener noreferrer">Source ↗</a></nav>
-    <span class="pill">PAPER ONLY <span aria-hidden="true">/</span> NO WALLET</span>
+  <a class="skip-link" href="#laboratory">Skip to laboratory</a>
+
+  <header class="specimen-hero" aria-labelledby="site-title">
+    <canvas id="worm-specimen" aria-label="An animated C. elegans worm drawn as a cloud of points"></canvas>
+    <div class="specimen-corner corner-tl"><span>SPECIMEN</span><strong>C. ELEGANS</strong><small>C302 · C1</small></div>
+    <div class="specimen-corner corner-tr"><span>EXPERIMENT</span><strong>SYNTHETIC MARKET</strong><small>PAPER EXECUTION</small></div>
+    <div class="hero-wordmark">
+      <h1 id="site-title">WORMBRAIN</h1>
+      <p><i>Caenorhabditis elegans</i></p>
+    </div>
+    <div class="specimen-corner corner-bl"><span id="hero-neurons">C302 NETWORK</span><strong>CONTINUOUS STATE</strong><small>ONE WORM / ONE REPLAY</small></div>
+    <div class="specimen-corner corner-br"><span class="observed"><i aria-hidden="true"></i> OBSERVED REPLAY</span><strong>PUBLIC · AUDITABLE</strong><small>NO WALLET</small></div>
+    <div class="scroll-cue" aria-hidden="true"><span>ENTER LAB</span><i></i></div>
   </header>
+
+  <nav class="topbar" aria-label="Primary navigation">
+    <a class="brand" href="#site-title" aria-label="WormBrain home">WORMBRAIN <small>/ C302 LAB</small></a>
+    <div><a href="#laboratory" class="active">Laboratory</a><a href="#model">Model &amp; limits</a><a href="https://github.com/openwormdev/openworm" target="_blank" rel="noopener noreferrer">Source ↗</a></div>
+    <span class="pill">PAPER ONLY <span aria-hidden="true">·</span> NO WALLET</span>
+  </nav>
+
   <main>
     <section class="intro" id="laboratory">
-      <div><p class="eyebrow">01 / CONNECTOME RESEARCH</p><h1>Follow the signal.</h1><p class="subhead">Market gradients in. Neural activity out. Every decision accounted for.</p></div>
+      <div><p class="eyebrow">LIVE / REFERENCE RECORDING</p><h2>Where the worm<br>is right now</h2><p class="subhead">Market gradients enter named sensory neurons. The c302 network integrates. Forward and reverse command circuits produce an intent. Every value below comes from the recording now in view.</p></div>
       <div class="runtime-label"><span class="status-dot" aria-hidden="true"></span><span id="source-label">Loading reference recording…</span><small>c302 C1 → jNeuroML → NEURON</small></div>
     </section>
+
     <section class="panel live-panel" aria-labelledby="live-title">
-      <div class="panel-heading"><div><p class="eyebrow">REAL TRANSACTION INPUT</p><h2 id="live-title">WORMBRAIN / GOOGL</h2></div><span id="live-state" class="tag">DISCONNECTED</span></div>
-      <p class="footnote">Robinhood Chain · <a href="https://www.ponsfamily.com/launchpad/0x2703295342C5914e0292ADFDB612618Ce24105d1" target="_blank" rel="noopener noreferrer">View WORMBRAIN on Pons ↗</a>. Observed buys, sells and price changes stimulate one persistent c302 model. No orders are placed.</p>
+      <div class="panel-heading live-heading">
+        <div><p class="eyebrow">WORMBRAIN TOKEN / LIVE OBSERVER</p><h2 id="live-title">Real transactions.<br>One persistent worm.</h2></div>
+        <div class="live-heading-end"><a class="token-link" href="https://www.ponsfamily.com/launchpad/0x2703295342C5914e0292ADFDB612618Ce24105d1" target="_blank" rel="noopener noreferrer">OPEN WORMBRAIN ON PONS ↗</a><span id="live-state" class="tag">DISCONNECTED</span></div>
+      </div>
+      <p class="footnote live-intro">The observer follows the WORMBRAIN token on Robinhood Chain. New buys, sells, and price changes become bounded sensory currents for the c302 model. It watches the market and records the worm’s response. It cannot place orders.</p>
       <div class="transport live-controls"><button id="live-start" class="primary">Watch real trades</button><button id="live-stop" disabled>Stop watching</button><button id="live-export" class="quiet" disabled>Export live audit</button></div>
-      <p id="live-status" role="status" class="footnote">Uses the Python worker configured below. A session runs for one hour after model setup.</p>
-      <div class="live-grid"><div><div class="mini-stats"><div>Observed trades<strong id="live-count">—</strong></div><div>New buys / sells<strong id="live-sides">—</strong></div><div>Price in GOOGL<strong id="live-price">—</strong></div></div><p id="live-coverage" class="footnote">Source: Pons public indexer. Receipt verification and complete transaction coverage are not available.</p><div id="live-sensory" class="sensory-grid"></div></div>
-      <div><div class="mini-stats"><div>Forward score<strong id="live-forward">—</strong></div><div>Reverse score<strong id="live-reverse">—</strong></div><div>Brain time<strong id="live-time">—</strong></div></div><svg id="live-chart" viewBox="0 0 560 180" role="img" aria-label="Latest live command-neuron voltages"></svg><div class="legend"><span><i class="legend-forward"></i>AVB + PVC</span><span><i class="legend-reverse"></i>AVA + AVD + AVE</span></div></div></div>
+      <p id="live-status" role="status" aria-live="polite" class="footnote live-status">Uses the Python worker configured below. A session runs for one hour after model setup.</p>
+      <div class="live-grid">
+        <div class="live-market">
+          <div class="mini-stats"><div>OBSERVED TRADES<strong id="live-count">—</strong></div><div>NEW BUYS / SELLS<strong id="live-sides">—</strong></div><div>PRICE IN GOOGL<strong id="live-price">—</strong></div></div>
+          <p id="live-coverage" class="footnote">Source: Pons public indexer. Receipt verification and complete transaction coverage are not available.</p>
+          <div id="live-sensory" class="sensory-grid"></div>
+        </div>
+        <div class="live-neural">
+          <div class="mini-stats"><div>FORWARD SCORE<strong id="live-forward">—</strong></div><div>REVERSE SCORE<strong id="live-reverse">—</strong></div><div>BRAIN TIME<strong id="live-time">—</strong></div></div>
+          <svg id="live-chart" viewBox="0 0 560 180" role="img" aria-label="Latest live command-neuron voltages"></svg>
+          <div class="legend"><span><i class="legend-forward"></i>AVB + PVC</span><span><i class="legend-reverse"></i>AVA + AVD + AVE</span></div>
+        </div>
+      </div>
     </section>
-    <div id="notice" role="status" class="notice">The replay section below uses synthetic markets and paper fills. Its recordings contain real c302 simulation output.</div>
+
+    <div id="notice" role="status" class="notice">Synthetic markets. Paper fills. Real c302 simulation output. This is not a live animal or a profitable strategy.</div>
+
     <section class="toolbar" aria-label="Replay controls">
-      <label class="field">MARKET SCENARIO<select id="scenario"><option value="reversal">Rise & reversal</option><option value="trend">Slow accumulation</option><option value="liquidity-shock">Liquidity shock</option></select></label>
+      <label class="field">MARKET SCENARIO<select id="scenario"><option value="reversal">Rise &amp; reversal</option><option value="trend">Slow accumulation</option><option value="liquidity-shock">Liquidity shock</option></select></label>
       <div class="transport"><button id="play" class="primary" disabled>▶ Play recording</button><button id="reset" disabled aria-label="Reset recording">↺ Reset</button></div>
       <label class="field speed">PLAYBACK<select id="speed"><option value="1000">1×</option><option value="500">2×</option><option value="250">4×</option></select></label>
       <button id="export" class="quiet" disabled>↓ Export audit</button>
       <label class="button quiet import">↑ Open report<input id="import" type="file" accept="application/json,.json"></label>
     </section>
+
     <section class="metrics" aria-label="Current readings">
       <article><p>SIMULATED NEURONS</p><strong id="neuron-count">—</strong><small>Actual generated population</small></article>
       <article><p>DIRECTIONAL MARGIN</p><strong id="margin">—</strong><small id="direction">Forward minus reverse</small></article>
       <article><p>PAPER EQUITY</p><strong id="equity">—</strong><small id="pnl">Initial balance: $1,000 fictional USD</small></article>
       <article><p>WORM INTENT</p><strong id="intent">—</strong><small id="position">Awaiting reference data</small></article>
     </section>
+
     <section class="workspace">
       <article class="panel market-panel">
-        <div class="panel-heading"><div><p class="eyebrow">ENVIRONMENT</p><h2 id="token-label">SYNTH / USD</h2></div><div class="right"><strong id="price">—</strong><small id="market-kind">Synthetic token · 15-second observations</small></div></div>
+        <div class="panel-heading"><div><p class="eyebrow">ENVIRONMENT</p><h3 id="token-label">SYNTH / USD</h3></div><div class="right"><strong id="price">—</strong><small id="market-kind">Synthetic token · 15-second observations</small></div></div>
         <div class="chart-wrap"><svg id="price-chart" viewBox="0 0 700 245" role="img" aria-label="Synthetic token price over the replay"></svg></div>
         <div class="timeline"><span id="time">T + 00:00</span><input id="scrubber" type="range" min="0" max="9" value="0" aria-label="Replay observation" disabled><span id="duration">02:15</span></div>
-        <div class="mini-stats"><div>Liquidity<strong id="liquidity">—</strong></div><div>Buy/sell imbalance<strong id="flow">—</strong></div><div>Price impact<strong id="impact">—</strong></div></div>
+        <div class="mini-stats"><div>LIQUIDITY<strong id="liquidity">—</strong></div><div>BUY / SELL IMBALANCE<strong id="flow">—</strong></div><div>PRICE IMPACT<strong id="impact">—</strong></div></div>
       </article>
+
       <article class="panel neural-panel">
-        <div class="panel-heading"><div><p class="eyebrow">COMMAND CIRCUIT</p><h2>Forward / reverse</h2></div><span class="tag">MEASURED mV</span></div>
+        <div class="panel-heading"><div><p class="eyebrow">COMMAND CIRCUIT</p><h3>Forward / reverse</h3></div><span class="tag">MEASURED mV</span></div>
         <div class="chart-wrap"><svg id="neural-chart" viewBox="0 0 560 195" role="img" aria-label="Average forward and reverse command-neuron membrane voltages"></svg></div>
         <div class="legend"><span><i class="legend-forward"></i>AVB + PVC</span><span><i class="legend-reverse"></i>AVA + AVD + AVE</span></div>
         <div class="scores"><div><span>FORWARD</span><strong id="forward-score">—</strong><progress id="forward-bar" max="1" value="0"></progress></div><div><span>REVERSE</span><strong id="reverse-score">—</strong><progress id="reverse-bar" max="1" value="0"></progress></div></div>
       </article>
-      <article class="panel sensory-panel"><div class="panel-heading"><div><p class="eyebrow">ENGINEERED INPUT</p><h2>Sensory stimulation</h2></div><span class="tag">0–5 pA</span></div><div id="sensory" class="sensory-grid"></div><p class="footnote">ASEL and ASER are distinct cells. Odor and avoidance inputs use bilateral pairs. These financial mappings are our experimental choices.</p></article>
-      <article class="panel risk-panel"><div class="panel-heading"><div><p class="eyebrow">INDEPENDENT SAFETY</p><h2>Risk cage</h2></div><span id="risk-badge" class="tag">—</span></div><div id="risk-rules" class="risk-rules"></div><p id="execution-note" class="footnote">No live transaction path exists in this build.</p></article>
+
+      <article class="panel sensory-panel"><div class="panel-heading"><div><p class="eyebrow">ENGINEERED INPUT</p><h3>Sensory stimulation</h3></div><span class="tag">0–5 pA</span></div><div id="sensory" class="sensory-grid"></div><p class="footnote">ASEL and ASER are distinct cells. Odor and avoidance inputs use bilateral pairs. These financial mappings are experimental choices.</p></article>
+      <article class="panel risk-panel"><div class="panel-heading"><div><p class="eyebrow">INDEPENDENT SAFETY</p><h3>Risk cage</h3></div><span id="risk-badge" class="tag">—</span></div><div id="risk-rules" class="risk-rules"></div><p id="execution-note" class="footnote">No live transaction path exists in this build.</p></article>
     </section>
-    <section class="panel audit-panel"><div class="panel-heading"><div><p class="eyebrow">HASH-LINKED DECISION CHAIN</p><h2>Who made the decision?</h2></div><span id="audit-count" class="tag">0 EVENTS</span></div><div class="table-scroll"><table><thead><tr><th>TIME</th><th>BY WORM</th><th>BY RISK CAGE</th><th>BY PAPER EXECUTOR</th><th>EVENT HASH</th></tr></thead><tbody id="audit"></tbody></table></div></section>
-    <section class="model-section" id="model"><div><p class="eyebrow">02 / REPRODUCIBILITY</p><h2>A connectome.<br>Not a financial oracle.</h2><p>This laboratory uses c302’s C1 equations and its default historical connectivity reader. It does not recreate all of a living worm’s physiology. Synaptic parameters, financial inputs, and readout thresholds carry substantial modeling assumptions.</p><p>The brain is continuous within a replay, then reset for the next token experiment. The browser replays saved traces; it does not emulate c302. Zero trades are a valid result.</p><a href="https://github.com/openworm/c302" target="_blank" rel="noopener noreferrer">Read the upstream c302 project ↗</a></div><dl id="model-details"></dl></section>
-    <section class="panel worker-panel"><div><p class="eyebrow">OPTIONAL / REAL RECOMPUTATION</p><h2>Connect a reference worker</h2><p>Local Python + Java runs the actual model. On Vercel, recordings work immediately; new simulations require your separately hosted worker. No wallet or signing key is used.</p></div><form id="worker-form"><label>Worker URL<input id="worker-url" type="url" placeholder="Same origin when running locally" autocomplete="off"></label><label>Worker access token<input id="worker-token" type="password" placeholder="Only for your remote worker" autocomplete="off"></label><button id="run" type="submit">Run real c302 simulation ↗</button><p id="worker-status" role="status">Credentials stay in memory and are never exported or saved.</p></form></section>
+
+    <section class="panel audit-panel"><div class="panel-heading"><div><p class="eyebrow">HASH-LINKED DECISION CHAIN</p><h3>Who made the decision?</h3></div><span id="audit-count" class="tag">0 EVENTS</span></div><div class="table-scroll"><table><thead><tr><th>TIME</th><th>BY WORM</th><th>BY RISK CAGE</th><th>BY PAPER EXECUTOR</th><th>EVENT HASH</th></tr></thead><tbody id="audit"></tbody></table></div></section>
+
+    <section class="model-section" id="model">
+      <div><p class="eyebrow">WHAT IT IS</p><h2>A real model,<br>not a metaphor</h2><p>This laboratory uses c302’s C1 equations and its default historical connectivity reader. The sensory currents are engineered; the full selected network propagates them; a fixed readout compares named forward and reverse command neurons.</p><p>It does not recreate all of a living worm’s physiology. Synaptic parameters, financial inputs, and readout thresholds carry substantial modelling assumptions. Zero trades are a valid result.</p><a href="https://github.com/openworm/c302" target="_blank" rel="noopener noreferrer">Inspect upstream c302 ↗</a></div>
+      <dl id="model-details"></dl>
+    </section>
+
+    <section class="claims-section">
+      <div><p class="eyebrow">WHAT IS NOT REAL, STATED PLAINLY</p><h2>The parts that<br>aren’t the worm</h2></div>
+      <ol>
+        <li><strong>The market senses are designed.</strong><span>Price gradients, flow, liquidity, and impact become bounded currents chosen for this experiment.</span></li>
+        <li><strong>The worm does not understand finance.</strong><span>It has no language, goals, wallet, or concept of a token. The readout is an imposed interpretation of command-neuron activity.</span></li>
+        <li><strong>The browser replays recordings.</strong><span>Bundled files contain model traces already calculated through c302, jNeuroML, and NEURON. Playback is not a browser simulation.</span></li>
+        <li><strong>The executor is paper-only.</strong><span>No order-signing method exists. Fills, fees, slippage, impact, balances, and P&amp;L are fictional and fully auditable.</span></li>
+      </ol>
+    </section>
+
+    <section class="panel worker-panel"><div><p class="eyebrow">OPTIONAL / REAL RECOMPUTATION</p><h3>Connect a reference worker</h3><p>Local Python + Java runs the actual model. The public site works immediately with recordings; new simulations require a separately hosted worker. No wallet or signing key is used.</p></div><form id="worker-form"><label>Worker URL<input id="worker-url" type="url" placeholder="Same origin when running locally" autocomplete="off"></label><label>Worker access token<input id="worker-token" type="password" placeholder="Only for your remote worker" autocomplete="off"></label><button id="run" type="submit">Run real c302 simulation ↗</button><p id="worker-status" role="status">Credentials stay in memory and are never exported or saved.</p></form></section>
   </main>
-  <footer><span>WORMBRAIN / v0.1.0</span><span>Open research. Paper execution. No performance promises.</span><a href="https://github.com/openwormdev/openworm" rel="noopener noreferrer">MIT / Source ↗</a></footer>
+
+  <footer><span>WORMBRAIN / v0.1.0</span><span>C302 CONNECTOME · PAPER EXECUTION · OPEN SOURCE</span><a href="https://github.com/openwormdev/openworm" rel="noopener noreferrer">MIT / SOURCE ↗</a></footer>
 </body>
 </html>
