@@ -50,6 +50,19 @@ h3 {
   white-space: nowrap;
 }
 
+.token-nav {
+  color: var(--green);
+  border-bottom: 1px solid currentColor;
+  padding-block: 4px;
+  white-space: nowrap;
+}
+
+.topbar .token-nav:hover,
+.topbar .token-nav:focus-visible,
+.topbar .token-nav:active {
+  color: var(--blue);
+}
+
 .token-link:hover,
 .token-link:focus-visible,
 .token-link:active {
