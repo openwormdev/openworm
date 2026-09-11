@@ -36,5 +36,6 @@ test('all reference recordings have valid contracts and trusted file hashes',asy
 test('public page has controls and no third-party scripts or forms',async()=>{
   const html=await readFile('web/index.html','utf8');
   for(const id of ['play','reset','scrubber','export','import','worker-form'])assert.ok(html.includes(`id="${id}"`));
+  assert.ok(html.includes('https://www.ponsfamily.com/launchpad/0x2703295342C5914e0292ADFDB612618Ce24105d1'));
   assert.ok(!/<script[^>]+src="https?:/i.test(html));assert.ok(!/action="https?:/i.test(html));
 });
