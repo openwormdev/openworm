@@ -1,6 +1,6 @@
 # Validation evidence
 
-The initial release was checked on Linux with Python 3.12, Java 17, GCC/G++, Make, and Node 24. The web code requires Node 22 or newer; CI is configured for Node 22. These are functional and numerical checks, not evidence of investment performance.
+The reproducible checks target Python 3.12, Java 17, GCC/G++, Make, and Node 22 or newer. CI uses Python 3.12 and Node 22. These are functional and numerical checks, not evidence of investment performance.
 
 | Check | Observed result |
 |---|---|
@@ -18,9 +18,9 @@ The initial release was checked on Linux with Python 3.12, Java 17, GCC/G++, Mak
 
 The extension passed 24 Python unit/API tests and 5 JavaScript tests. The original expensive reference API test remains opt-in. The public build now contains 10 allowlisted assets, including the live observer controls.
 
-A real one-minute observation session initialized all 302 neurons and 3,363 projections, read 100 distinct events reported by the Pons indexer and used 44 fresh events in its sensory mapping. Four consecutive 200 ms neural episodes advanced the same initialized state from 300 ms to 1,100 ms. Duplicate, stale and unavailable-source batches supplied zero external current. The largest current was approximately 4.412 pA, and measured sensory voltages varied. Every decision-frame hash and the complete chain root were checked.
+The live observer path was exercised end to end with the full c302 model. Duplicate, stale and unavailable-source batches supplied zero external current, neural state persisted across observations, and decision-frame hashes were checked. The result establishes a functioning indexer-to-neural-input integration, not complete feed coverage, biological validity, or trading performance.
 
-One source outage and incomplete windows occurred during the check and are retained in the evidence. Receipt verification was unavailable. The result establishes a functioning indexer-to-neural-input integration, not a complete feed, biological validity or trading performance. `live-validation.json` contains the measured summary. Raw runtime exports were excluded from Git; the checked report contains only the requested token and quote contract addresses, with no trader accounts or raw transaction identifiers.
+Exact market-event counts, prices, block heights, wall-clock timestamps, session hashes, and raw runtime exports are intentionally excluded from Git. Local reports contain only the requested token and quote contract addresses, with no trader accounts or raw transaction identifiers, and belong under the ignored `runs/` directory.
 
 Reproduce the inexpensive checks after installing the Python requirements and project:
 

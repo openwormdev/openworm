@@ -20,7 +20,7 @@ This is an experimental connectome controller, not a validated animal mind or a 
 
 The live observer is pinned to `0x2703295342C5914e0292ADFDB612618Ce24105d1` on Robinhood Chain (4663). Its quote asset is GOOGL, with 18 decimals. Prices and volume in this view are **GOOGL units, not USD or ETH**.
 
-After completing the local installation below, run `wormbrain serve`, open the dashboard, and choose **Watch real trades**. This initializes the full c302 model once and reads recent Pons v2 trade events throughout a one-hour session. **Stop watching** ends it. The same worker cannot run a historical replay and a live session simultaneously.
+The public dashboard automatically displays the token's recent Pons v2 trade window through a same-origin, read-only endpoint. It publishes only aggregate counts and price data; wallet and transaction identifiers are discarded. After completing the local installation below, run `wormbrain serve` and choose **Watch real trades** to additionally initialize the full c302 model for a one-hour neural observation session. **Stop watching** ends the neural session. The same worker cannot run a historical replay and a live session simultaneously.
 
 For a terminal session:
 

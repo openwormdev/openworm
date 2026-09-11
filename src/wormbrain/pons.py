@@ -111,6 +111,33 @@ def parse_trade(row: dict, now: float) -> Trade:
                  row["side"], row["venue"], *amounts)
 
 
+def public_market_snapshot(rows: list[dict], *, now: float | None = None) -> dict:
+    """Return the fixed token's aggregate public window without account or transaction data."""
+    now = time.time() if now is None else now
+    trades = sorted((parse_trade(row, now) for row in rows), key=lambda trade: (trade.block, trade.log_index))
+    unique = {}
+    for trade in trades:
+        previous = unique.get(trade.event_id)
+        if previous is not None and previous != trade:
+            raise FeedError("Conflicting source events")
+        unique[trade.event_id] = trade
+    trades = sorted(unique.values(), key=lambda trade: (trade.block, trade.log_index))
+    latest = trades[-1] if trades else None
+    return dict(
+        schema_version=1,
+        kind="wormbrain-token-market",
+        status="connected",
+        source=dict(provider="pons-public-indexer", token=TOKEN, chain_id=4663,
+                    quote_symbol="GOOGL", coverage="recent-indexed-window"),
+        recent=dict(events=len(trades),
+                    buy_events=sum(trade.side == "buy" for trade in trades),
+                    sell_events=sum(trade.side == "sell" for trade in trades),
+                    price_quote=(latest.quote_amount / latest.token_amount) if latest else None,
+                    latest_trade_at=latest.timestamp if latest else None,
+                    latest_block=latest.block if latest else None),
+    )
+
+
 class TradeFeed:
     def __init__(self):
         self.seen = OrderedDict()

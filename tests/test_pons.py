@@ -3,7 +3,7 @@ import unittest
 from dataclasses import asdict
 from unittest.mock import patch
 
-from wormbrain.pons import FeedError, TradeFeed, parse_trade
+from wormbrain.pons import FeedError, TradeFeed, parse_trade, public_market_snapshot
 
 
 def event(block=10, log=0, *, side="buy", quote=2, tokens=10, timestamp=1000):
@@ -14,6 +14,15 @@ def event(block=10, log=0, *, side="buy", quote=2, tokens=10, timestamp=1000):
 
 
 class PonsTests(unittest.TestCase):
+    def test_public_market_snapshot_is_aggregate_only(self):
+        snapshot = public_market_snapshot([event(log=0), event(log=1, side="sell")], now=1001)
+        self.assertEqual(snapshot["status"], "connected")
+        self.assertEqual(snapshot["recent"]["events"], 2)
+        self.assertEqual(snapshot["recent"]["buy_events"], 1)
+        self.assertEqual(snapshot["recent"]["sell_events"], 1)
+        self.assertNotIn("account", json.dumps(snapshot))
+        self.assertNotIn("transactionHash", json.dumps(snapshot))
+
     def test_amounts_are_in_quote_units_and_accounts_are_discarded(self):
         trade = parse_trade(event(), 1001)
         self.assertEqual(trade.quote_amount, 2)

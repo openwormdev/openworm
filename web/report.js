@@ -3,6 +3,18 @@ export const REVERSE = ['AVAL', 'AVAR', 'AVDL', 'AVDR', 'AVEL', 'AVER'];
 export const SENSORY = ['ASEL', 'ASER', 'AWAL', 'AWAR', 'AWCL', 'AWCR', 'ASHL', 'ASHR'];
 const finite = (x) => typeof x === 'number' && Number.isFinite(x);
 const hash = (x) => typeof x === 'string' && /^[a-f0-9]{64}$/.test(x);
+export function validateTokenMarket(r) {
+  const fail=()=>{throw new Error('Invalid token feed response.');};
+  if(!r||r.schema_version!==1||r.kind!=='wormbrain-token-market'||r.status!=='connected')fail();
+  if(r.source?.provider!=='pons-public-indexer'||r.source.token!=='0x2703295342c5914e0292adfdb612618ce24105d1'||r.source.chain_id!==4663||r.source.quote_symbol!=='GOOGL'||r.source.coverage!=='recent-indexed-window')fail();
+  const recent=r.recent;
+  for(const name of ['events','buy_events','sell_events'])if(!Number.isSafeInteger(recent?.[name])||recent[name]<0||recent[name]>500)fail();
+  if(recent.buy_events+recent.sell_events!==recent.events)fail();
+  if(recent.price_quote!==null&&(!finite(recent.price_quote)||recent.price_quote<=0))fail();
+  if(recent.latest_trade_at!==null&&(!Number.isSafeInteger(recent.latest_trade_at)||recent.latest_trade_at<=0))fail();
+  if(recent.latest_block!==null&&(!Number.isSafeInteger(recent.latest_block)||recent.latest_block<=0))fail();
+  return r;
+}
 export function validateLiveSnapshot(r) {
   const fail=()=>{throw new Error('Invalid live worker response.');};
   if(!r||r.kind!=='wormbrain-live-observer'||r.schema_version!==1||r.live_execution!==false||r.trading_mode!=='observation-only')fail();

@@ -55,6 +55,6 @@ Account, sender, recipient, profile, social and fee-recipient data are excluded 
 
 ## Running and deployment
 
-`wormbrain watch --seconds 3600` runs a session from the terminal. The local dashboard uses authenticated `/api/live/start`, `/api/live/stop` and `/api/live` routes. Existing worker-token and exact-origin controls apply to all three. Start and replay requests share one worker slot. The live page sends no data to Pons directly; the Python worker reads the fixed endpoint.
+`wormbrain watch --seconds 3600` runs a session from the terminal. The dashboard loads aggregate token activity from the public, same-origin `/api/token` route. On Vercel this small function reads the fixed Pons endpoint and removes wallet and transaction identifiers before responding; the local Python server exposes the same response contract. Authenticated `/api/live/start`, `/api/live/stop` and `/api/live` routes remain responsible for the neural observer. Existing worker-token and exact-origin controls apply to those three routes. Start and replay requests share one worker slot. The browser sends no data to Pons directly.
 
-Vercel hosts the controls and charts. The persistent Python/Java/NEURON process must run separately. There is no claim that this chat, a static Vercel deployment or an exported recording keeps a brain running indefinitely.
+Vercel hosts the controls, charts and sanitized token-data function. The persistent Python/Java/NEURON process must run separately for live neural output. There is no claim that this chat, the Vercel token feed or an exported recording keeps a brain running indefinitely.

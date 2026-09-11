@@ -16,6 +16,7 @@ from pydantic import BaseModel, ConfigDict
 from .core import SCENARIOS
 from .replay import run_replay
 from .live import monitor
+from .pons import FeedError, fetch_trades, public_market_snapshot
 
 app = FastAPI(title="WormBrain paper worker", docs_url=None, redoc_url=None, openapi_url=None)
 if os.getenv("WORM_REMOTE_MODE") == "1" and not os.getenv("WORM_WORKER_TOKEN"):
@@ -49,6 +50,14 @@ def authorize(request: Request) -> None:
 def health():
     available = all(shutil.which(x) for x in ("java", "gcc", "g++", "make"))
     return dict(status="ok" if available else "degraded", runtime="c302-reference", backend="neuron", mode="paper", live_execution=False)
+
+
+@app.get("/api/token")
+def token_market():
+    try:
+        return public_market_snapshot(fetch_trades())
+    except FeedError as exc:
+        raise HTTPException(503, "Token feed temporarily unavailable") from exc
 
 
 class JobRequest(BaseModel):

@@ -13,6 +13,12 @@ class ApiTests(unittest.TestCase):
         data=self.client.get('/api/health').json()
         self.assertFalse(data['live_execution']);self.assertEqual(data['mode'],'paper')
 
+    def test_public_token_market_is_sanitized(self):
+        with patch('wormbrain.api.fetch_trades', return_value=[]):
+            response=self.client.get('/api/token')
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.json()['kind'],'wormbrain-token-market')
+
     def test_token_and_origin_enforced(self):
         with patch.dict(os.environ,{'WORM_WORKER_TOKEN':'test-only-not-a-real-credential'}):
             self.assertEqual(self.client.post('/api/jobs',json={'scenario':'trend'}).status_code,401)

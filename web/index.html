@@ -48,14 +48,14 @@
     <section class="panel live-panel" aria-labelledby="live-title">
       <div class="panel-heading live-heading">
         <div><p class="eyebrow">WORMBRAIN TOKEN / LIVE OBSERVER</p><h2 id="live-title">Real transactions.<br>One persistent worm.</h2></div>
-        <div class="live-heading-end"><a class="token-link" href="https://www.ponsfamily.com/launchpad/0x2703295342C5914e0292ADFDB612618Ce24105d1" target="_blank" rel="noopener noreferrer">OPEN WORMBRAIN ON PONS ↗</a><span id="live-state" class="tag">DISCONNECTED</span></div>
+        <div class="live-heading-end"><a class="token-link" href="https://www.ponsfamily.com/launchpad/0x2703295342C5914e0292ADFDB612618Ce24105d1" target="_blank" rel="noopener noreferrer">OPEN WORMBRAIN ON PONS ↗</a><span id="live-state" class="tag">CONNECTING</span></div>
       </div>
       <p class="footnote live-intro">The observer follows the WORMBRAIN token on Robinhood Chain. New buys, sells, and price changes become bounded sensory currents for the c302 model. It watches the market and records the worm’s response. It cannot place orders.</p>
       <div class="transport live-controls"><button id="live-start" class="primary">Watch real trades</button><button id="live-stop" disabled>Stop watching</button><button id="live-export" class="quiet" disabled>Export live audit</button></div>
-      <p id="live-status" role="status" aria-live="polite" class="footnote live-status">Uses the Python worker configured below. A session runs for one hour after model setup.</p>
+      <p id="live-status" role="status" aria-live="polite" class="footnote live-status">Connecting to the WORMBRAIN public token feed. The optional Python worker runs the neural observer.</p>
       <div class="live-grid">
         <div class="live-market">
-          <div class="mini-stats"><div>OBSERVED TRADES<strong id="live-count">—</strong></div><div>NEW BUYS / SELLS<strong id="live-sides">—</strong></div><div>PRICE IN GOOGL<strong id="live-price">—</strong></div></div>
+          <div class="mini-stats"><div>RECENT INDEXED TRADES<strong id="live-count">—</strong></div><div>RECENT BUYS / SELLS<strong id="live-sides">—</strong></div><div>PRICE IN GOOGL<strong id="live-price">—</strong></div></div>
           <p id="live-coverage" class="footnote">Source: Pons public indexer. Receipt verification and complete transaction coverage are not available.</p>
           <div id="live-sensory" class="sensory-grid"></div>
         </div>

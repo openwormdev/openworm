@@ -11,6 +11,8 @@ __pycache__/
 node_modules/
 dist/
 runs/
+docs/*live-audit*.json
+docs/live-validation.json
 *.log
 *.sqlite*
 *.key

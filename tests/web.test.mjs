@@ -2,7 +2,20 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {validateReport,validateLiveSnapshot,workerBase,meanTrace,FORWARD} from '../web/report.js';
+import {validateReport,validateLiveSnapshot,validateTokenMarket,workerBase,meanTrace,FORWARD} from '../web/report.js';
+import {GET,summarizeTrades} from '../api/token.js';
+
+const indexedTrade=(side='buy',log=0)=>({
+  id:`4663:10:0x${'a'.repeat(64)}:${log}`,
+  transactionHash:`0x${'a'.repeat(64)}`,
+  blockNumber:10,
+  timestamp:1000,
+  side,
+  venue:'pool',
+  tokenAmount:'10000000000000000000',
+  quoteAmount:'2000000000000000000',
+  account:'must-not-leave-the-server',
+});
 
 test('worker URLs reject token leaks and unsafe protocols',()=>{
   assert.equal(workerBase('https://worker.example','https://page.example'),'https://worker.example');
@@ -19,6 +32,18 @@ test('live observer is bound to the requested token and never grants execution',
   assert.equal(validateLiveSnapshot(idle).status,'idle');
   assert.throws(()=>validateLiveSnapshot({...idle,live_execution:true}));
   assert.throws(()=>validateLiveSnapshot({...idle,source:{...idle.source,chain_id:1}}));
+});
+test('public token endpoint returns only validated aggregate market data',async()=>{
+  const payload={trades:[indexedTrade('buy',0),indexedTrade('sell',1)]};
+  const summary=validateTokenMarket(summarizeTrades(payload,1001));
+  assert.equal(summary.recent.events,2);assert.equal(summary.recent.buy_events,1);assert.equal(summary.recent.sell_events,1);assert.equal(summary.recent.price_quote,.2);
+  assert.ok(!JSON.stringify(summary).includes('must-not-leave-the-server'));
+  assert.ok(!JSON.stringify(summary).includes('transactionHash'));
+  const originalFetch=globalThis.fetch;
+  globalThis.fetch=async()=>new Response(JSON.stringify(payload),{status:200,headers:{'Content-Type':'application/json'}});
+  try{
+    const response=await GET();assert.equal(response.status,200);validateTokenMarket(await response.json());
+  }finally{globalThis.fetch=originalFetch;}
 });
 test('all reference recordings have valid contracts and trusted file hashes',async()=>{
   const manifest=JSON.parse(await readFile('web/data/manifest.json','utf8'));
@@ -39,5 +64,6 @@ test('public page has controls and no third-party scripts or forms',async()=>{
   for(const id of ['worm-specimen','hero-neurons','play','reset','scrubber','export','import','worker-form','live-start','live-stop','live-export','live-chart'])assert.ok(html.includes(`id="${id}"`));
   for(const marker of ['specimen-hero','hero-wordmark','claims-section'])assert.ok(html.includes(marker));
   assert.ok(html.includes('class="token-nav"'));assert.equal(html.split(tokenUrl).length-1,2);
+  assert.ok(html.includes('id="live-state" class="tag">CONNECTING</span>'));
   assert.ok(!/<script[^>]+src="https?:/i.test(html));assert.ok(!/action="https?:/i.test(html));
 });
