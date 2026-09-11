@@ -2,7 +2,7 @@ import {cp, mkdir, readFile, rm} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {validateReport} from '../web/report.js';
 
-const files = ['index.html','styles.css','app.js','report.js'];
+const files = ['index.html','styles.css','app.js','report.js','live.js','live.css'];
 const manifest = JSON.parse(await readFile('web/data/manifest.json','utf8'));
 for (const scenario of ['trend','reversal','liquidity-shock']) {
   const path=`data/${scenario}.json`;

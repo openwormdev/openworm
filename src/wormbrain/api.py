@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict
 
 from .core import SCENARIOS
 from .replay import run_replay
+from .live import monitor
 
 app = FastAPI(title="WormBrain paper worker", docs_url=None, redoc_url=None, openapi_url=None)
 if os.getenv("WORM_REMOTE_MODE") == "1" and not os.getenv("WORM_WORKER_TOKEN"):
@@ -71,7 +72,7 @@ def create_job(body: JobRequest):
     if body.scenario not in SCENARIOS:
         raise HTTPException(422, "Choose a supported scenario")
     with lock:
-        if any(x["status"] == "running" for x in jobs.values()):
+        if monitor.active or any(x["status"] == "running" for x in jobs.values()):
             raise HTTPException(429, "One reference simulation is already running")
         while len(jobs) >= 8:
             jobs.pop(next(iter(jobs)))
@@ -87,6 +88,26 @@ def get_job(identifier: str):
         if identifier not in jobs:
             raise HTTPException(404, "Job not found or expired")
         return jobs[identifier]
+
+
+@app.post("/api/live/start", dependencies=[Depends(authorize)], status_code=202)
+def start_live():
+    with lock:
+        if monitor.active or any(x["status"] == "running" for x in jobs.values()):
+            raise HTTPException(429, "The reference worker is already in use")
+        monitor.start(seconds=3600)
+    return dict(status="preparing-brain", session_seconds=3600)
+
+
+@app.post("/api/live/stop", dependencies=[Depends(authorize)])
+def stop_live():
+    monitor.stop()
+    return dict(status="stop-requested")
+
+
+@app.get("/api/live", dependencies=[Depends(authorize)])
+def live_status(history: bool = False):
+    return monitor.snapshot(history=history)
 
 
 web = Path(os.getenv("WORM_WEB_ROOT", str(Path(__file__).resolve().parents[2] / "web")))

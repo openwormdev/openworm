@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node --test tests/web.test.mjs",
-    "check": "node --check web/app.js && node --check web/report.js && node scripts/privacy-check.mjs"
+    "check": "node --check web/app.js && node --check web/report.js && node --check web/live.js && node scripts/privacy-check.mjs"
   },
   "engines": {"node": ">=22"}
 }

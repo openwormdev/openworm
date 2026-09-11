@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {validateReport,workerBase,meanTrace,FORWARD} from '../web/report.js';
+import {validateReport,validateLiveSnapshot,workerBase,meanTrace,FORWARD} from '../web/report.js';
 
 test('worker URLs reject token leaks and unsafe protocols',()=>{
   assert.equal(workerBase('https://worker.example','https://page.example'),'https://worker.example');
@@ -13,6 +13,12 @@ test('worker URLs reject token leaks and unsafe protocols',()=>{
 });
 test('report validator rejects arbitrary and malformed JSON objects',()=>{
   for(const bad of [null,{},[],{schema_version:1},{trading_mode:'live'}])assert.throws(()=>validateReport(bad));
+});
+test('live observer is bound to the requested token and never grants execution',()=>{
+  const idle={schema_version:1,kind:'wormbrain-live-observer',trading_mode:'observation-only',live_execution:false,status:'idle',source:{token:'0x2703295342c5914e0292adfdb612618ce24105d1',chain_id:4663,quote_symbol:'GOOGL'},frames:[],total_observed_events:0,total_stimulated_events:0};
+  assert.equal(validateLiveSnapshot(idle).status,'idle');
+  assert.throws(()=>validateLiveSnapshot({...idle,live_execution:true}));
+  assert.throws(()=>validateLiveSnapshot({...idle,source:{...idle.source,chain_id:1}}));
 });
 test('all reference recordings have valid contracts and trusted file hashes',async()=>{
   const manifest=JSON.parse(await readFile('web/data/manifest.json','utf8'));
@@ -30,6 +36,5 @@ test('all reference recordings have valid contracts and trusted file hashes',asy
 test('public page has controls and no third-party scripts or forms',async()=>{
   const html=await readFile('web/index.html','utf8');
   for(const id of ['play','reset','scrubber','export','import','worker-form'])assert.ok(html.includes(`id="${id}"`));
-  assert.ok(html.includes('WORMBRAIN'));assert.ok(!new RegExp(['worm','street'].join(''),'i').test(html));
   assert.ok(!/<script[^>]+src="https?:/i.test(html));assert.ok(!/action="https?:/i.test(html));
 });

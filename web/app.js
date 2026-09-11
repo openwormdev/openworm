@@ -29,7 +29,6 @@ function render() {
   $('market-kind').textContent=report.market_source==='synthetic'?'Synthetic token · 15-second observations':'Unverified input · 15-second observations';
   $('source-label').textContent=originLabel;
   $('neuron-count').textContent=report.model.neurons;
-  $('hero-neurons').textContent=`${Number(report.model.neurons).toLocaleString()} MODEL NEURONS`;
   $('margin').textContent=(r.scores.margin>=0?'+':'')+r.scores.margin.toFixed(3);
   $('direction').textContent=r.scores.margin>0?'Forward-dominant output':r.scores.margin<0?'Reverse-dominant output':'No directional separation';
   $('equity').textContent=money(r.equity);$('pnl').textContent=`${money(r.equity-report.policy.initial_cash)} marked P&L · unrealized included`;
@@ -39,9 +38,9 @@ function render() {
   $('scrubber').value=index;$('scrubber').max=report.rows.length-1;
   $('liquidity').textContent=money(t.liquidity);$('flow').textContent=`${(t.flow*100).toFixed(0)}%`;$('impact').textContent=`${t.price_impact_bps} bps`;
   $('forward-score').textContent=r.scores.forward.toFixed(3);$('reverse-score').textContent=r.scores.reverse.toFixed(3);$('forward-bar').value=r.scores.forward;$('reverse-bar').value=r.scores.reverse;
-  chart('price-chart',[report.rows.map(x=>x.tick.price)],['#3dff88'],index,'price');
+  chart('price-chart',[report.rows.map(x=>x.tick.price)],['#a5f4cb'],index,'price');
   const neuralAt=report.traces.time_ms.findIndex(x=>x>=report.config.warmup_ms+(index+1)*report.config.episode_ms-report.config.readout_ms/2);
-  chart('neural-chart',[meanTrace(report,FORWARD),meanTrace(report,REVERSE)],['#3dff88','#ff8e68'],neuralAt<0?report.traces.time_ms.length-1:neuralAt,'mv');
+  chart('neural-chart',[meanTrace(report,FORWARD),meanTrace(report,REVERSE)],['#a5f4cb','#f6b396'],neuralAt<0?report.traces.time_ms.length-1:neuralAt,'mv');
   $('sensory').replaceChildren(...SENSORY.map(name=>{const item=element('div','','sensory-row');item.append(element('span',name),element('span',`${r.stimulus_pa[name].toFixed(2)} pA`));const bar=document.createElement('progress');bar.max=5;bar.value=r.stimulus_pa[name];bar.setAttribute('aria-label',`${name} input current`);item.append(bar);return item;}));
   $('risk-badge').textContent=r.risk;$('risk-badge').className=`tag ${r.risk==='ALLOW'?'pass':'warn'}`;
   const rules=[['Data freshness',t.fresh,'FRESH','STALE'],['Eligible token',t.eligible,'PASS','BLOCK'],[`Liquidity ≥ ${money(report.policy.min_liquidity)}`,t.liquidity>=report.policy.min_liquidity,'PASS','BLOCK'],[`Price impact ≤ ${report.policy.max_impact_bps} bps`,t.price_impact_bps<=report.policy.max_impact_bps,'PASS','BLOCK'],['Execution authority',true,'PAPER ONLY','']];
@@ -58,9 +57,9 @@ async function loadScenario() {
   pause();const ticket=++epoch;const name=$('scenario').value;
   for(const id of ['play','reset','export','scrubber'])$(id).disabled=true;
   try {
-    const manifestResponse=await fetch(new URL('./data/manifest.json',import.meta.url));if(!manifestResponse.ok)throw new Error('Reference recordings are not installed. Run the Python replay command to generate them.');
+    const manifestResponse=await fetch('/data/manifest.json');if(!manifestResponse.ok)throw new Error('Reference recordings are not installed. Run the Python replay command to generate them.');
     const manifest=await manifestResponse.json();
-    const response=await fetch(new URL(`./data/${name}.json`,import.meta.url));if(!response.ok)throw new Error('This reference recording is unavailable.');
+    const response=await fetch(`/data/${name}.json`);if(!response.ok)throw new Error('This reference recording is unavailable.');
     const raw=await response.text();if(await sha256(raw)!==manifest[name])throw new Error('Recording integrity check failed.');
     if(ticket!==epoch)return;
     acceptReport(JSON.parse(raw),'Verified bundled recording');
@@ -93,55 +92,4 @@ $('worker-form').addEventListener('submit',async event=>{
   finally{working=false;$('run').disabled=false;}
 });
 if(document.modelContext?.registerTool){try{Promise.resolve(document.modelContext.registerTool({name:'read_paper_replay',description:'Read the currently visible paper-only replay observation; does not run a model or trade.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},execute(input){if(input&&Object.keys(input).length)throw new Error('No arguments accepted');return report?{source:originLabel,scenario:report.scenario,tick:index,intent:report.rows[index].intent,risk:report.rows[index].risk,paper_equity:report.rows[index].equity}: {status:'not_loaded'};}})).catch(()=>{});}catch{}}
-
-function startSpecimen() {
-  const canvas=$('worm-specimen');
-  const context=canvas?.getContext('2d',{alpha:false});
-  if(!context)return;
-  const count=11000,points=new Float32Array(count*4);
-  let seed=0x302c1;
-  const random=()=>((seed=Math.imul(seed,1664525)+1013904223>>>0)/4294967296);
-  const gaussian=()=>Math.sqrt(-2*Math.log(Math.max(random(),1e-7)))*Math.cos(2*Math.PI*random());
-  for(let i=0;i<count;i++){
-    const u=random(),x=(u-.5)*2;
-    const taper=Math.pow(Math.sin(Math.PI*u),.62);
-    const radius=(.012+.105*taper)*(random()<.78?.74+random()*.26:Math.sqrt(random()));
-    const angle=random()*Math.PI*2;
-    points[i*4]=x;
-    points[i*4+1]=Math.cos(angle)*radius+gaussian()*.006;
-    points[i*4+2]=Math.sin(angle)*radius;
-    points[i*4+3]=random();
-  }
-  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let tick=0,pointer=0,targetPointer=0;
-  const fit=()=>{const rect=canvas.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);canvas.width=Math.max(2,Math.floor(rect.width*d));canvas.height=Math.max(2,Math.floor(rect.height*d));};
-  const aim=event=>{targetPointer=(event.clientX/innerWidth-.5)*.18;};
-  addEventListener('resize',fit,{passive:true});
-  addEventListener('pointermove',aim,{passive:true});
-  function draw(){
-    const width=canvas.width,height=canvas.height,d=Math.min(devicePixelRatio||1,2);
-    context.fillStyle='#06070a';context.fillRect(0,0,width,height);
-    pointer+=(targetPointer-pointer)*.035;
-    const scale=Math.min(width*.43,height*.61),centerY=height*(innerWidth<640?.34:.35);
-    for(let i=0;i<count;i++){
-      const x=points[i*4],ry=points[i*4+1],z=points[i*4+2],spark=points[i*4+3];
-      const wave=Math.sin(x*3.05+tick*.48)*.13+Math.sin(x*6.7-tick*.22)*.025;
-      const twist=Math.sin(x*2.4+tick*.18)*.26+pointer;
-      const ct=Math.cos(twist),st=Math.sin(twist),y=ry*ct-z*st,depth=ry*st+z*ct;
-      const px=width/2+x*scale;
-      const py=centerY+(wave+y)*scale;
-      const near=Math.max(0,Math.min(1,.5+depth*4.1));
-      const pulse=!reduced&&spark>.992&&Math.sin(tick*5+spark*90)>.45;
-      context.globalAlpha=pulse?.95:.16+near*.64;
-      context.fillStyle=pulse?'#dffaff':near>.57?'#abddef':'#52798e';
-      const size=(.55+near*1.18+(pulse?1.1:0))*d;
-      context.fillRect(px,py,size,size);
-    }
-    context.globalAlpha=1;
-    if(!reduced){tick+=.012;requestAnimationFrame(draw);}
-  }
-  fit();draw();
-}
-
-startSpecimen();
 loadScenario();

@@ -3,6 +3,23 @@ export const REVERSE = ['AVAL', 'AVAR', 'AVDL', 'AVDR', 'AVEL', 'AVER'];
 export const SENSORY = ['ASEL', 'ASER', 'AWAL', 'AWAR', 'AWCL', 'AWCR', 'ASHL', 'ASHR'];
 const finite = (x) => typeof x === 'number' && Number.isFinite(x);
 const hash = (x) => typeof x === 'string' && /^[a-f0-9]{64}$/.test(x);
+export function validateLiveSnapshot(r) {
+  const fail=()=>{throw new Error('Invalid live worker response.');};
+  if(!r||r.kind!=='wormbrain-live-observer'||r.schema_version!==1||r.live_execution!==false||r.trading_mode!=='observation-only')fail();
+  if(r.source?.token!=='0x2703295342c5914e0292adfdb612618ce24105d1'||r.source.chain_id!==4663||r.source.quote_symbol!=='GOOGL')fail();
+  if(!['idle','preparing-brain','connecting','observing','source-unavailable','stopping','stopped','failed'].includes(r.status))fail();
+  for(const n of ['total_observed_events','total_stimulated_events'])if(!Number.isSafeInteger(r[n])||r[n]<0)fail();
+  if(!Array.isArray(r.frames)||r.frames.length>240)fail();
+  for(const f of r.frames){
+    if(!hash(f.event_hash)||!finite(f.time_ms)||!f.market||typeof f.market.coverage!=='string'||typeof f.market.feed_status!=='string')fail();
+    for(const n of ['forward','reverse','margin'])if(!finite(f.scores?.[n])||Math.abs(f.scores[n])>1)fail();
+    for(const n of SENSORY)if(!finite(f.stimulus_pa?.[n])||f.stimulus_pa[n]<0||f.stimulus_pa[n]>5)fail();
+    if(f.market.price_quote!=null&&(!finite(f.market.price_quote)||f.market.price_quote<=0))fail();
+    const t=f.traces?.time_ms;if(!Array.isArray(t)||t.length<2||t.length>200||t.some(x=>!finite(x)))fail();
+    for(const n of [...FORWARD,...REVERSE]){const v=f.traces.voltage_mv?.[n];if(!Array.isArray(v)||v.length!==t.length||v.some(x=>!finite(x)))fail();}
+  }
+  return r;
+}
 export function validateReport(r) {
   const fail = () => { throw new Error('This file is not a supported WormBrain reference report.'); };
   if (!r || r.schema_version !== 1 || r.trading_mode !== 'paper' || r.simulation_mode !== 'real-c302' || r.model?.kind !== 'c302-reference') fail();

@@ -14,7 +14,7 @@ from pathlib import Path
 from .core import MODEL_CONFIG, READOUT, SENSORY, digest
 
 
-def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "neuron") -> dict:
+def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "neuron", _prepare_stream: bool = False) -> dict:
     if shutil.which("java") is None:
         raise RuntimeError("Java is required for the c302 reference simulator")
     if backend not in {"neuron", "jneuroml"}:
@@ -68,6 +68,17 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
                             output.remove(column)
         lems_tree.write(lems_path, encoding="utf-8", xml_declaration=True)
         jar = pynml.get_path_to_jnml_jar()
+        def model_identity():
+            import hashlib
+            identity = {k: importlib.metadata.version(k) for k in ("c302", "cect", "pyNeuroML", "libNeuroML", "neuron")}
+            identity.update(parameter_set="C1", reader=MODEL_CONFIG["reader"], neurons=len(names),
+                            projections=len(network.projections) + len(network.electrical_projections) + len(network.continuous_projections),
+                            population_hash=digest(names), config_hash=digest(MODEL_CONFIG), kind="c302-reference",
+                            runtime="NEURON via jNeuroML exporter" if backend == "neuron" else "jNeuroML interpreter",
+                            backend=backend, continuity="continuous-within-token-replay")
+            for key, path in (("network_sha256", nml), ("jar_sha256", Path(jar)), ("cell_components_sha256", folder / "cell_C.xml")):
+                identity[key] = hashlib.sha256(path.read_bytes()).hexdigest()
+            return identity
         # Direct argv avoids shell interpolation and guarantees a hard timeout.
         def checked(argv, timeout, env=None):
             try:
@@ -87,6 +98,10 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
             compiler_env = os.environ.copy()
             compiler_env.update(CC=shutil.which("gcc"), CXX=shutil.which("g++"))
             checked([str(compiler)], 120, env=compiler_env)
+            if _prepare_stream:
+                identity = model_identity()
+                identity.update(continuity="continuous-with-live-session", stimulus_mode="streamed-pulse-amplitudes")
+                return dict(model=identity)
             checked([sys.executable, "LEMS_WormBrain_nrn.py"], 120)
         data = np.loadtxt(folder / "WormBrain.dat")
         if data.ndim != 2 or data.shape[1] != len(READOUT) + 1 or not np.isfinite(data).all():
@@ -119,17 +134,6 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
             frames.append({n: float(np.mean(data[mask, col]) * 1000) for n, col in lookup.items()})
         stride = max(1, len(times) // 500)
         traces = {n: [round(float(x) * 1000, 6) for x in data[::stride, col]] for n, col in lookup.items()}
-        projections = len(network.projections) + len(network.electrical_projections) + len(network.continuous_projections)
-        identity = {k: importlib.metadata.version(k) for k in ("c302", "cect", "pyNeuroML", "libNeuroML", "neuron")}
-        identity.update(parameter_set="C1", reader=MODEL_CONFIG["reader"], neurons=len(names),
-                        projections=projections, population_hash=digest(names),
-                        config_hash=digest(MODEL_CONFIG), kind="c302-reference",
-                        runtime="NEURON via jNeuroML exporter" if backend == "neuron" else "jNeuroML interpreter",
-                        backend=backend, continuity="continuous-within-token-replay")
-        # Identity for all generated equations and topology, with host paths excluded.
-        import hashlib
-        identity["network_sha256"] = hashlib.sha256(nml.read_bytes()).hexdigest()
-        identity["jar_sha256"] = hashlib.sha256(Path(jar).read_bytes()).hexdigest()
-        identity["cell_components_sha256"] = hashlib.sha256((folder / "cell_C.xml").read_bytes()).hexdigest()
+        identity = model_identity()
     return dict(model=identity, null_mv=null, frames_mv=frames,
                 traces=dict(time_ms=[round(float(x), 4) for x in times[::stride]], voltage_mv=traces))
