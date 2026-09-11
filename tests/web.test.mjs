@@ -30,6 +30,7 @@ test('report validator rejects arbitrary and malformed JSON objects',()=>{
 test('live observer is bound to the requested token and never grants execution',()=>{
   const idle={schema_version:1,kind:'wormbrain-live-observer',trading_mode:'observation-only',live_execution:false,status:'idle',source:{token:'0x2703295342c5914e0292adfdb612618ce24105d1',chain_id:4663,quote_symbol:'GOOGL'},frames:[],total_observed_events:0,total_stimulated_events:0};
   assert.equal(validateLiveSnapshot(idle).status,'idle');
+  assert.equal(validateLiveSnapshot({...idle,schema_version:2,trading_mode:'paper'}).trading_mode,'paper');
   assert.throws(()=>validateLiveSnapshot({...idle,live_execution:true}));
   assert.throws(()=>validateLiveSnapshot({...idle,source:{...idle.source,chain_id:1}}));
 });
@@ -61,7 +62,7 @@ test('all reference recordings have valid contracts and trusted file hashes',asy
 test('public page has controls and no third-party scripts or forms',async()=>{
   const html=await readFile('web/index.html','utf8');
   const tokenUrl='https://www.ponsfamily.com/launchpad/0x2703295342C5914e0292ADFDB612618Ce24105d1';
-  for(const id of ['worm-specimen','hero-neurons','play','reset','scrubber','export','import','worker-form','live-start','live-stop','live-export','live-chart'])assert.ok(html.includes(`id="${id}"`));
+  for(const id of ['worm-specimen','hero-neurons','play','reset','scrubber','export','import','worker-form','live-start','live-stop','live-export','live-chart','live-decoder','live-plasticity','live-risk','rim-score','rib-score'])assert.ok(html.includes(`id="${id}"`));
   for(const marker of ['specimen-hero','hero-wordmark','claims-section'])assert.ok(html.includes(marker));
   assert.ok(html.includes('class="token-nav"'));assert.equal(html.split(tokenUrl).length-1,2);
   assert.ok(html.includes('id="live-state" class="tag">CONNECTING</span>'));

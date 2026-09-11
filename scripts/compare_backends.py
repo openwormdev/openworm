@@ -10,8 +10,8 @@ from wormbrain.core import MODEL_CONFIG, READOUT, SENSORY
 def main():
     original = dict(MODEL_CONFIG)
     MODEL_CONFIG.update(warmup_ms=20, episode_ms=20, readout_ms=5, pulse_delay_ms=2, pulse_duration_ms=14)
-    inputs = [{n: (2.5 if n in {'ASEL', 'AWAL', 'AWAR'} else 0.0) for n in SENSORY},
-              {n: (2.5 if n in {'ASER', 'ASHL', 'ASHR'} else 0.0) for n in SENSORY}]
+    inputs = [{n: (1.5 if n in {'ASEL', 'AWAL', 'AWAR'} else 0.0) for n in SENSORY},
+              {n: (1.5 if n in {'ASER', 'ASHL', 'ASHR'} else 0.0) for n in SENSORY}]
     try:
         with tempfile.TemporaryDirectory(prefix='wormbrain-comparison-') as folder:
             reference = simulate(inputs, Path(folder) / 'java', backend='jneuroml')
@@ -25,8 +25,11 @@ def main():
             actual=np.interp(times,b['time_ms'],b['voltage_mv'][neuron])
             delta=actual-expected
             errors[neuron]={'max_abs_mv':float(np.max(np.abs(delta))),'rmse_mv':float(np.sqrt(np.mean(delta**2)))}
-        summary={'scope':'60 ms transient and driven smoke comparison; 302 neurons, 18 observed',
+        summary={'scope':f"60 ms transient and driven smoke comparison; {reference['model']['neurons']} neurons, {len(READOUT)} observed",
                  'reference':'jNeuroML interpreter','export':'NEURON via official jNeuroML exporter',
+                 'reader':reference['model']['reader'],'reader_cache_sha256':reference['model']['reader_cache_sha256'],
+                 'reference_model_sha256':reference['model']['network_sha256'],
+                 'exported_model_sha256':exported['model']['network_sha256'],
                  'dt_ms':.05,'threshold_max_abs_mv':1.0,'errors':errors,
                  'passed':max(e['max_abs_mv'] for e in errors.values()) <= 1.0,
                  'limitation':'Does not establish long-run or behavioral equivalence.'}

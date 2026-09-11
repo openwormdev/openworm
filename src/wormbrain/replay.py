@@ -24,14 +24,15 @@ def run_replay(name: str, *, ticks: list[dict] | None = None) -> dict:
                     previous_hash=previous)
         previous = digest(body)
         rows.append(dict(body, event_hash=previous))
-    report = dict(schema_version=1, scenario=name if ticks is None else "imported-replay",
+    report = dict(schema_version=2, scenario=name if ticks is None else "imported-replay",
                   market_source="synthetic" if ticks is None else "user-provided-unverified",
                   trading_mode="paper", token="SYNTH" if ticks is None else "REPLAY",
                   simulation_mode="real-c302", model=result["model"],
                   config=MODEL_CONFIG, policy=POLICY, null_mv=result["null_mv"],
                   traces=result["traces"], rows=rows, audit_root=previous,
                   claims=["No real orders", "Not a validated animal mind", "No evidence of profitability",
-                          "Market-to-neuron map and financial decoder are engineered",
-                          "No body physics or proprioceptive feedback"])
+                  "Market-to-neuron map and financial decoder are engineered",
+                          "No body physics; paper-outcome feedback is enabled only in the persistent live worker",
+                          "Plasticity is enabled only between ticks in the persistent live worker"])
     report["report_hash"] = digest(report)
     return report

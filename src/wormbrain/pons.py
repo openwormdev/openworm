@@ -12,7 +12,7 @@ import urllib.request
 from collections import OrderedDict
 from dataclasses import dataclass
 
-from .core import clip, digest
+from .core import SENSORY_CALIBRATION, calibrated_current, clip, digest
 
 TOKEN = "0x2703295342c5914e0292adfdb612618ce24105d1"
 QUOTE = "0x2e0847e8910a9732eb3fb1bb4b70a580adad4fe3"
@@ -23,21 +23,21 @@ SOURCE = dict(provider="pons-public-indexer", chain_id=4663, token=TOKEN,
               coverage="Recent indexed events only; not a complete chain history")
 POLL_SECONDS = 15
 MAX_AGE_SECONDS = 60
-LIVE_ENCODING = dict(version="pons-observation-v1", max_current_pa=5.0,
+LIVE_ENCODING = dict(version="pons-observation-v2", calibration=SENSORY_CALIBRATION,
                      gradient_weight=.7, imbalance_weight=.3,
                      drawdown_weight=.6, sell_pressure_weight=.4,
-                     description="Engineered observed-price and quote-volume map; no biological calibration")
+                     description="Published synthetic salt-gradient analogue; not an in-vivo biological fit")
 
 
 def live_encode(frame: dict, buy_share: float) -> dict:
-    scale = 5.0 * frame["quality"]
     buy_pressure, sell_pressure = max(frame["flow"], 0), max(-frame["flow"], 0)
-    up = clip(.7 * max(frame["return_z"], 0) / 3 + .3 * buy_pressure)
-    down = clip(.7 * max(-frame["return_z"], 0) / 3 + .3 * sell_pressure)
+    up = .7 * max(frame["return_z"], 0) / 3 + .3 * buy_pressure
+    down = .7 * max(-frame["return_z"], 0) / 3 + .3 * sell_pressure
     danger = clip(.6 * frame["drawdown"] / .2 + .4 * sell_pressure)
-    return {"ASEL": up * scale, "ASER": down * scale,
-            **{n: clip(buy_share) * scale for n in ("AWAL", "AWAR", "AWCL", "AWCR")},
-            "ASHL": danger * scale, "ASHR": danger * scale}
+    values = {"ASEL": up, "ASER": down,
+              **{n: buy_pressure for n in ("AWAL", "AWAR", "AWCL", "AWCR")},
+              "ASHL": danger, "ASHR": danger}
+    return {name: calibrated_current(name, value, frame["quality"]) for name, value in values.items()}
 
 
 class FeedError(RuntimeError):

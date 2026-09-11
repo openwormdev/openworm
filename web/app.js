@@ -1,4 +1,4 @@
-import {FORWARD, REVERSE, SENSORY, validateReport, meanTrace, workerBase, sha256} from './report.js';
+import {CURRENT_LIMITS, FORWARD, REVERSE, SENSORY, validateReport, meanTrace, workerBase, sha256} from './report.js';
 const $ = id => document.getElementById(id);
 const money = x => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(x);
 const time = x => `${Math.floor(x / 60).toString().padStart(2,'0')}:${(x % 60).toString().padStart(2,'0')}`;
@@ -30,8 +30,8 @@ function render() {
   $('source-label').textContent=originLabel;
   $('neuron-count').textContent=report.model.neurons;
   $('hero-neurons').textContent=`${Number(report.model.neurons).toLocaleString()} MODEL NEURONS`;
-  $('margin').textContent=(r.scores.margin>=0?'+':'')+r.scores.margin.toFixed(3);
-  $('direction').textContent=r.scores.margin>0?'Forward-dominant output':r.scores.margin<0?'Reverse-dominant output':'No directional separation';
+  $('margin').textContent=r.decoder?.state??((r.scores.margin>=0?'+':'')+r.scores.margin.toFixed(3));
+  $('direction').textContent=r.decoder?`F ${r.decoder.vector.forward.toFixed(3)} · R ${r.decoder.vector.reverse.toFixed(3)} · P ${r.decoder.vector.pause.toFixed(3)}`:r.scores.margin>0?'Forward-dominant output':r.scores.margin<0?'Reverse-dominant output':'No directional separation';
   $('equity').textContent=money(r.equity);$('pnl').textContent=`${money(r.equity-report.policy.initial_cash)} marked P&L · unrealized included`;
   $('intent').textContent=r.intent;$('intent').className=r.intent==='ENTER'?'pass':r.intent==='EXIT'?'warn':'';
   $('position').textContent=`${r.position} · ${r.units.toFixed(4)} paper units`;
@@ -39,10 +39,12 @@ function render() {
   $('scrubber').value=index;$('scrubber').max=report.rows.length-1;
   $('liquidity').textContent=money(t.liquidity);$('flow').textContent=`${(t.flow*100).toFixed(0)}%`;$('impact').textContent=`${t.price_impact_bps} bps`;
   $('forward-score').textContent=r.scores.forward.toFixed(3);$('reverse-score').textContent=r.scores.reverse.toFixed(3);$('forward-bar').value=r.scores.forward;$('reverse-bar').value=r.scores.reverse;
+  $('rim-score').textContent=r.voltage_mv?.RIML===undefined?'NOT RECORDED':`${r.voltage_mv.RIML.toFixed(2)} / ${r.voltage_mv.RIMR.toFixed(2)} mV`;
+  $('rib-score').textContent=r.voltage_mv?.RIBL===undefined?'NOT RECORDED':`${r.voltage_mv.RIBL.toFixed(2)} / ${r.voltage_mv.RIBR.toFixed(2)} mV`;
   chart('price-chart',[report.rows.map(x=>x.tick.price)],['#3dff88'],index,'price');
   const neuralAt=report.traces.time_ms.findIndex(x=>x>=report.config.warmup_ms+(index+1)*report.config.episode_ms-report.config.readout_ms/2);
   chart('neural-chart',[meanTrace(report,FORWARD),meanTrace(report,REVERSE)],['#3dff88','#ff8e68'],neuralAt<0?report.traces.time_ms.length-1:neuralAt,'mv');
-  $('sensory').replaceChildren(...SENSORY.map(name=>{const item=element('div','','sensory-row');item.append(element('span',name),element('span',`${r.stimulus_pa[name].toFixed(2)} pA`));const bar=document.createElement('progress');bar.max=5;bar.value=r.stimulus_pa[name];bar.setAttribute('aria-label',`${name} input current`);item.append(bar);return item;}));
+  $('sensory').replaceChildren(...SENSORY.map(name=>{const item=element('div','','sensory-row');item.append(element('span',name),element('span',`${r.stimulus_pa[name].toFixed(2)} pA`));const bar=document.createElement('progress');bar.max=report.schema_version===2?CURRENT_LIMITS[name]:5;bar.value=r.stimulus_pa[name];bar.setAttribute('aria-label',`${name} input current`);item.append(bar);return item;}));
   $('risk-badge').textContent=r.risk;$('risk-badge').className=`tag ${r.risk==='ALLOW'?'pass':'warn'}`;
   const rules=[['Data freshness',t.fresh,'FRESH','STALE'],['Eligible token',t.eligible,'PASS','BLOCK'],[`Liquidity ≥ ${money(report.policy.min_liquidity)}`,t.liquidity>=report.policy.min_liquidity,'PASS','BLOCK'],[`Price impact ≤ ${report.policy.max_impact_bps} bps`,t.price_impact_bps<=report.policy.max_impact_bps,'PASS','BLOCK'],['Execution authority',true,'PAPER ONLY','']];
   $('risk-rules').replaceChildren(...rules.map(([label,ok,a,b])=>{const item=element('div','','rule');item.append(element('span',label),element('small',ok?a:b,ok?'pass':'warn'));return item;}));
@@ -50,7 +52,7 @@ function render() {
   $('audit-count').textContent=`${index+1} / ${report.rows.length} EVENTS`;
   $('audit').replaceChildren(...report.rows.slice(0,index+1).reverse().map((x,i)=>{const tr=element('tr','',i===0?'current':'');tr.append(element('td',time(x.tick.seconds)));const intent=element('td','');intent.append(element('span',x.intent,`tag ${x.intent==='ENTER'?'pass':x.intent==='EXIT'?'warn':''}`));tr.append(intent,element('td',x.risk+(x.reasons.length?` · ${x.reasons.join(', ')}`:'')),element('td',x.fill?`${x.fill.side} ${x.fill.units.toFixed(3)} @ ${money(x.fill.price)}`:x.execution==='EXIT_UNFILLED'?'UNFILLED EXIT':'NO ORDER'));const digest=element('td',x.event_hash.slice(0,12));digest.title=x.event_hash;tr.append(digest);return tr;}));
   const m=report.model;
-  const facts=[['Engine',`c302 ${m.c302} / C1`],['Backend',m.runtime],['Connectivity reader',m.reader],['Neurons / projections',`${m.neurons} / ${m.projections}`],['Temporal model','Continuous within replay'],['Market source',report.market_source],['Model hash',m.network_sha256],['Audit root',report.audit_root]];
+  const facts=[['Engine',`c302 ${m.c302} / C1`],['Backend',m.runtime],['Connectivity reader',m.reader],['Reader cache hash',m.reader_cache_sha256??'Legacy recording'],['Neurons / projections',`${m.neurons} / ${m.projections}`],['Decoder',r.decoder?'Forward / reverse / pause state machine':'Legacy directional margin'],['Calibration hash',m.calibration_hash??'Legacy 0–5 pA map'],['Plastic family',m.plasticity?.family??'Not enabled in this recording'],['Temporal model','Continuous within replay'],['Market source',report.market_source],['Model hash',m.network_sha256],['Audit root',report.audit_root]];
   $('model-details').replaceChildren(...facts.map(([k,v])=>{const line=element('div','');line.append(element('dt',k),element('dd',v));return line;}));
 }
 function acceptReport(value,label) { report=validateReport(value);originLabel=label;index=0;pause();for(const id of ['play','reset','export','scrubber'])$(id).disabled=false;render(); }

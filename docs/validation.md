@@ -4,21 +4,21 @@ The reproducible checks target Python 3.12, Java 17, GCC/G++, Make, and Node 22 
 
 | Check | Observed result |
 |---|---|
-| Python feature, decoder, risk and API tests | 17 passed |
-| JavaScript contracts, URL handling and recording integrity | 4 passed |
-| Actual worker API integration | A submitted job completed a full c302 C1 replay; 302 neurons, NEURON backend, finite varying sensory activity, report hash and every decision-chain hash verified |
-| Bundled model runs | Three independent real simulations: trend, reversal and liquidity shock; each includes 302 neurons and 3,363 projections |
-| Paper outcomes | All three bundled simulations generated zero fills at the frozen thresholds |
-| Independent execution tests | Prescribed decoder outputs exercise entry confirmation, buys, sells, costs, external vetoes, cooldown, a latching kill switch and unfilled exits |
-| Backend comparison | 60 ms full-network smoke comparison, 18 recorded neurons; maximum absolute voltage error approximately 0.149 mV, below the predeclared 1 mV limit |
-| Public build | Eight allowlisted static assets; recording hashes checked before copying |
-| Publication review | Source scanned for keys, access tokens, email addresses and machine paths; optional upstream donor labels removed from model metadata |
+| Python feature, decoder, risk, feed and API tests | 34 passed; the native integration gate was skipped locally |
+| JavaScript contracts, URL handling and recording integrity | 6 passed |
+| Current reader generation | Pinned Cook 2019 cache hash verified; generated 302 populations and 5,905 projections; all 22 requested readouts, all feedback targets, and seven existing ASE-to-AIA/AIY paths were present |
+| Decoder and paper loop | Unit tests cover forward/reverse/pause transitions, paper fills, vetoes, cooldown, latching kill switch, and unfilled exits without the legacy two-tick margin trigger |
+| Plasticity and feedback | Unit tests cover bounded depression/recovery and bounded PVC/DVA-style fill/veto feedback; native conductance mutation still requires the real integration gate |
+| Bundled model runs | The three public recordings remain valid legacy-reader artifacts and are accepted as schema v1; they are not evidence for the new reader |
+| Backend comparison | The committed 18-cell comparison is explicitly labeled `legacy-reader-baseline`; it does not validate the current model identity |
+| Public build | Ten allowlisted assets; recording hashes checked before copying |
+| Publication review | Privacy scan covers credentials, contact data, user paths, location clues, device metadata, analytics IDs and wall-clock timestamps; optional upstream donor labels are removed from model metadata |
 
 ## Live observer extension
 
-The extension passed 24 Python unit/API tests and 5 JavaScript tests. The original expensive reference API test remains opt-in. The public build now contains 10 allowlisted assets, including the live observer controls.
+The current inexpensive suite passed 34 Python unit/API tests and 6 JavaScript tests. The expensive reference API test remains opt-in. The public build contains 10 allowlisted assets until a hash-pinned live observer artifact is added, plus the live observer controls.
 
-The live observer path was exercised end to end with the full c302 model. Duplicate, stale and unavailable-source batches supplied zero external current, neural state persisted across observations, and decision-frame hashes were checked. The result establishes a functioning indexer-to-neural-input integration, not complete feed coverage, biological validity, or trading performance.
+An earlier live observer path was exercised end to end with the legacy-reader model. The new reader, RIM/RIB recordings, native ASE-family conductance mutation, and feedback inputs require a fresh Linux/Java/NEURON integration run before they are described as end-to-end validated.
 
 Exact market-event counts, prices, block heights, wall-clock timestamps, session hashes, and raw runtime exports are intentionally excluded from Git. Local reports contain only the requested token and quote contract addresses, with no trader accounts or raw transaction identifiers, and belong under the ignored `runs/` directory.
 
@@ -38,6 +38,6 @@ WORM_RUN_INTEGRATION=1 python -m unittest discover -s tests -p 'test_reference.p
 python scripts/compare_backends.py
 ```
 
-The normal GitHub Actions workflow runs the inexpensive checks. The manually triggered reference workflow runs a real model replay. A workflow definition does not mean that GitHub has already run it successfully.
+The normal GitHub Actions workflow runs the inexpensive checks. The manually triggered reference workflow runs the real model gate. A workflow definition does not mean that GitHub has already run it successfully.
 
 No browser visual inspection, Docker image build or Vercel deployment was performed for this validation. Vercel serves static recordings and observation controls; fresh simulations require the separate worker. Long-horizon backend equivalence, current connectome accuracy, complete live-market coverage and comparative strategy performance remain unvalidated. Refer to the model card before interpreting the neural responses.

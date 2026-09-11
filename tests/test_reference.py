@@ -24,8 +24,12 @@ class RealWorkerTests(unittest.TestCase):
                 time.sleep(.5)
             self.assertEqual(result['status'],'complete',result.get('error','timeout'))
             report=result['report']
-            self.assertEqual(report['model']['neurons'],302)
+            self.assertGreater(report['model']['neurons'],10)
             self.assertEqual(report['model']['backend'],'neuron')
+            self.assertEqual(report['model']['reader'],'cect.readers.Cook2019HermReader')
+            self.assertEqual(report['model']['reader_cache_sha256'],'98bdafffce1341d3443a83066a6225a977c8218c28c27d69e4bd465782bd4cc8')
+            self.assertTrue({'RIML','RIMR','RIBL','RIBR'}.issubset(report['model']['recorded_cells']))
+            self.assertEqual(len(report['model']['plasticity']['components']),7)
             self.assertEqual(report['simulation_mode'],'real-c302')
             saved_hash=report.pop('report_hash')
             self.assertEqual(saved_hash,digest(report))

@@ -10,7 +10,7 @@ import time
 from pathlib import Path
 
 from .brain import simulate
-from .core import SENSORY
+from .core import PLASTICITY, PROPRIOCEPTIVE, SENSORY
 
 
 class LiveBrain:
@@ -31,6 +31,10 @@ class LiveBrain:
             if ready.get("status") != "ready":
                 raise RuntimeError("Live brain did not initialize")
             self.null_mv = ready["null_mv"]
+            self.recorded_cells = ready["recorded_cells"]
+            self.plasticity_targets = ready["plasticity_targets"]
+            if set(self.plasticity_targets) != set(PLASTICITY["paths"]):
+                raise RuntimeError("Live brain did not expose every pinned plasticity target")
             return self
         except Exception:
             self.__exit__(None, None, None)
@@ -55,12 +59,16 @@ class LiveBrain:
                     break
         raise RuntimeError("Live simulator failed or timed out")
 
-    def step(self, currents):
-        self.process.stdin.write((json.dumps(dict(stimulus_pa=currents), allow_nan=False) + "\n").encode())
+    def step(self, currents, *, feedback_pa=None, plasticity_gain=1.0):
+        feedback_pa = feedback_pa or {name: 0.0 for name in PROPRIOCEPTIVE}
+        command = dict(stimulus_pa=currents, feedback_pa=feedback_pa, plasticity_gain=plasticity_gain)
+        self.process.stdin.write((json.dumps(command, allow_nan=False) + "\n").encode())
         self.process.stdin.flush()
         result = self._read()
         if result.get("status") != "advanced":
             raise RuntimeError("Live simulator did not advance")
+        if result.get("plasticity_applied_gain") != plasticity_gain:
+            raise RuntimeError("Live simulator did not apply the requested plasticity gain")
         return result
 
     def __exit__(self, *args):

@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import importlib.metadata
+import importlib.resources
 import io
 import math
 import os
@@ -11,7 +13,17 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .core import MODEL_CONFIG, READOUT, SENSORY, digest
+from .core import (CURRENT_LIMITS_PA, INPUT_CELLS, MODEL_CONFIG, OPTIONAL_READOUT,
+                   PLASTICITY, PROPRIOCEPTION, READOUT, SENSORY,
+                   SENSORY_CALIBRATION, digest)
+
+
+def _verified_reader_cache() -> str:
+    resource = importlib.resources.files("cect").joinpath("cache", "Cook2019HermReader.json")
+    observed = hashlib.sha256(resource.read_bytes()).hexdigest()
+    if observed != MODEL_CONFIG["reader_cache_sha256"]:
+        raise RuntimeError("Pinned CECT reader cache hash mismatch")
+    return observed
 
 
 def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "neuron", _prepare_stream: bool = False) -> dict:
@@ -22,7 +34,7 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
     if not 2 <= len(stimuli) <= 24:
         raise ValueError("Simulation must contain 2–24 sensory frames")
     for frame in stimuli:
-        if set(frame) != set(SENSORY) or any(not math.isfinite(x) or not 0 <= x <= 5 for x in frame.values()):
+        if set(frame) != set(SENSORY) or any(not math.isfinite(value) or not 0 <= value <= CURRENT_LIMITS_PA[name] for name, value in frame.items()):
             raise ValueError("Invalid sensory input")
     # Third-party generators print local paths. Capture, never publish them.
     with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
@@ -36,21 +48,35 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
         duration = MODEL_CONFIG["warmup_ms"] + len(stimuli) * MODEL_CONFIG["episode_ms"]
         params = ParameterisedModel()
         params.set_bioparameter("unphysiological_offset_current", "0pA", "No hidden market stimulus", "0")
+        baseline = params.get_bioparameter("neuron_to_neuron_exc_syn_conductance").value
+        path_overrides = {f"{path.replace('->', '_to_')}_exc_syn_conductance": baseline for path in PLASTICITY["paths"]}
+        verified_reader_hash = _verified_reader_cache()
         doc = c302.generate("WormBrain", params,
-                            data_reader=MODEL_CONFIG["reader"], cells=None,
+                            data_reader=MODEL_CONFIG["reader_adapter"], cells=None,
                             cells_to_plot=[], cells_to_stimulate=[], muscles_to_include=[],
                             duration=duration, dt=MODEL_CONFIG["dt_ms"], seed=MODEL_CONFIG["seed"],
-                            target_directory=str(folder), verbose=False)
+                            param_overrides=path_overrides, target_directory=str(folder), verbose=False)
         network = doc.networks[0]
         # Upstream adds optional donor labels. They are metadata, not physiology.
         for population in network.populations:
             population.properties[:] = [p for p in population.properties if p.tag != "OpenWormBackerAssignedName"]
         names = sorted(p.id for p in network.populations)
-        if not set(READOUT).issubset(names):
+        required_readout = tuple(name for name in READOUT if name not in OPTIONAL_READOUT)
+        if not set(required_readout).issubset(names) or not set(INPUT_CELLS).issubset(names):
             raise RuntimeError("Required biological neurons are absent from this reader")
+        recorded = tuple(name for name in READOUT if name in names)
+        projections = {(p.presynaptic_population, p.postsynaptic_population): p for p in network.continuous_projections}
+        plastic_components = {}
+        for path in PLASTICITY["paths"]:
+            pre, post = path.split("->")
+            projection = projections.get((pre, post))
+            if projection is None or not projection.continuous_connection_instance_ws:
+                raise RuntimeError("Pinned plastic synapse family is absent from this reader")
+            plastic_components[path] = projection.continuous_connection_instance_ws[0].post_component
         for i, frame in enumerate(stimuli):
             delay = MODEL_CONFIG["warmup_ms"] + i * MODEL_CONFIG["episode_ms"] + MODEL_CONFIG["pulse_delay_ms"]
-            for neuron, amplitude in sorted(frame.items()):
+            currents = {**{name: 0.0 for name in INPUT_CELLS}, **frame}
+            for neuron, amplitude in sorted(currents.items()):
                 c302.add_new_input(doc, neuron, f"{delay}ms", f"{MODEL_CONFIG['pulse_duration_ms']}ms", f"{amplitude:.8f}pA", params)
         nml = folder / "WormBrain.net.nml"
         NeuroMLWriter.write(doc, str(nml))
@@ -64,16 +90,19 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
                     sim.remove(output)
                 else:
                     for column in list(output):
-                        if column.attrib.get("quantity", "").split("/")[0] not in READOUT:
+                        if column.attrib.get("quantity", "").split("/")[0] not in recorded:
                             output.remove(column)
         lems_tree.write(lems_path, encoding="utf-8", xml_declaration=True)
         jar = pynml.get_path_to_jnml_jar()
         def model_identity():
-            import hashlib
             identity = {k: importlib.metadata.version(k) for k in ("c302", "cect", "pyNeuroML", "libNeuroML", "neuron")}
-            identity.update(parameter_set="C1", reader=MODEL_CONFIG["reader"], neurons=len(names),
+            identity.update(parameter_set="C1", reader=MODEL_CONFIG["reader"], reader_adapter=MODEL_CONFIG["reader_adapter"], neurons=len(names),
                             projections=len(network.projections) + len(network.electrical_projections) + len(network.continuous_projections),
                             population_hash=digest(names), config_hash=digest(MODEL_CONFIG), kind="c302-reference",
+                            reader_cache_sha256=verified_reader_hash, recorded_cells=list(recorded),
+                            sensory_calibration=SENSORY_CALIBRATION, calibration_hash=digest(SENSORY_CALIBRATION),
+                            plasticity={**PLASTICITY, "components": plastic_components},
+                            proprioception=PROPRIOCEPTION,
                             runtime="NEURON via jNeuroML exporter" if backend == "neuron" else "jNeuroML interpreter",
                             backend=backend, continuity="continuous-within-token-replay")
             for key, path in (("network_sha256", nml), ("jar_sha256", Path(jar)), ("cell_components_sha256", folder / "cell_C.xml")):
@@ -104,7 +133,7 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
                 return dict(model=identity)
             checked([sys.executable, "LEMS_WormBrain_nrn.py"], 120)
         data = np.loadtxt(folder / "WormBrain.dat")
-        if data.ndim != 2 or data.shape[1] != len(READOUT) + 1 or not np.isfinite(data).all():
+        if data.ndim != 2 or data.shape[1] != len(recorded) + 1 or not np.isfinite(data).all():
             raise RuntimeError("Invalid or incomplete simulator traces")
         if data[-1, 0] * 1000 < duration - 2 * MODEL_CONFIG["dt_ms"]:
             raise RuntimeError("Simulation stopped before the requested horizon")
@@ -114,10 +143,10 @@ def simulate(stimuli: list[dict[str, float]], folder: Path, *, backend: str = "n
         for output in root.iter("OutputFile"):
             if output.attrib.get("fileName") == "WormBrain.dat":
                 columns = [c.attrib["quantity"].split("/")[0] for c in output.findall("OutputColumn")]
-        if set(columns) != set(READOUT):
+        if set(columns) != set(recorded):
             raise RuntimeError("NeuroML output columns disagree with model populations")
         times = data[:, 0] * 1000
-        lookup = {n: columns.index(n) + 1 for n in READOUT}
+        lookup = {n: columns.index(n) + 1 for n in recorded}
         warmup = MODEL_CONFIG["warmup_ms"]
         window = MODEL_CONFIG["readout_ms"]
         episode = MODEL_CONFIG["episode_ms"]

@@ -48,9 +48,9 @@
     <section class="panel live-panel" aria-labelledby="live-title">
       <div class="panel-heading live-heading">
         <div><p class="eyebrow">WORMBRAIN TOKEN / LIVE OBSERVER</p><h2 id="live-title">Real transactions.<br>One persistent worm.</h2></div>
-        <div class="live-heading-end"><a class="token-link" href="https://www.ponsfamily.com/launchpad/0x2703295342C5914e0292ADFDB612618Ce24105d1" target="_blank" rel="noopener noreferrer">OPEN WORMBRAIN ON PONS ↗</a><span id="live-state" class="tag">CONNECTING</span></div>
+        <div class="live-heading-end"><a class="token-link" href="https://www.ponsfamily.com/launchpad/0x2703295342C5914e0292ADFDB612618Ce24105d1" target="_blank" rel="noopener noreferrer">OPEN WORMBRAIN ON PONS ↗</a><a id="live-recording-link" class="token-link" href="/data/live-observer.json" hidden>INSPECT OBSERVER RECORDING ↗</a><span id="live-state" class="tag">CONNECTING</span></div>
       </div>
-      <p class="footnote live-intro">The observer follows the WORMBRAIN token on Robinhood Chain. New buys, sells, and price changes become bounded sensory currents for the c302 model. It watches the market and records the worm’s response. It cannot place orders.</p>
+      <p class="footnote live-intro">The observer follows the WORMBRAIN token on Robinhood Chain. New buys, sells, and price changes become calibrated sensory currents for the persistent c302 model. Command voltages become paper order intent, then the independent risk cage records fill or veto feedback. It has no wallet and cannot place real orders.</p>
       <div class="transport live-controls"><button id="live-start" class="primary">Watch real trades</button><button id="live-stop" disabled>Stop watching</button><button id="live-export" class="quiet" disabled>Export live audit</button></div>
       <p id="live-status" role="status" aria-live="polite" class="footnote live-status">Connecting to the WORMBRAIN public token feed. The optional Python worker runs the neural observer.</p>
       <div class="live-grid">
@@ -60,7 +60,7 @@
           <div id="live-sensory" class="sensory-grid"></div>
         </div>
         <div class="live-neural">
-          <div class="mini-stats"><div>FORWARD SCORE<strong id="live-forward">—</strong></div><div>REVERSE SCORE<strong id="live-reverse">—</strong></div><div>BRAIN TIME<strong id="live-time">—</strong></div></div>
+          <div class="mini-stats"><div>DECODER STATE<strong id="live-decoder">—</strong></div><div>FORWARD / REVERSE<strong><span id="live-forward">—</span> / <span id="live-reverse">—</span></strong></div><div>RIM / RIB<strong id="live-rim-rib">—</strong></div><div>ASE PATH GAIN<strong id="live-plasticity">—</strong></div><div>RISK / PAPER FILL<strong id="live-risk">—</strong></div><div>BRAIN TIME<strong id="live-time">—</strong></div></div>
           <svg id="live-chart" viewBox="0 0 560 180" role="img" aria-label="Latest live command-neuron voltages"></svg>
           <div class="legend"><span><i class="legend-forward"></i>AVB + PVC</span><span><i class="legend-reverse"></i>AVA + AVD + AVE</span></div>
         </div>
@@ -79,7 +79,7 @@
 
     <section class="metrics" aria-label="Current readings">
       <article><p>SIMULATED NEURONS</p><strong id="neuron-count">—</strong><small>Actual generated population</small></article>
-      <article><p>DIRECTIONAL MARGIN</p><strong id="margin">—</strong><small id="direction">Forward minus reverse</small></article>
+      <article><p>COMMAND STATE</p><strong id="margin">—</strong><small id="direction">Forward / reverse / pause vector</small></article>
       <article><p>PAPER EQUITY</p><strong id="equity">—</strong><small id="pnl">Initial balance: $1,000 fictional USD</small></article>
       <article><p>WORM INTENT</p><strong id="intent">—</strong><small id="position">Awaiting reference data</small></article>
     </section>
@@ -93,20 +93,20 @@
       </article>
 
       <article class="panel neural-panel">
-        <div class="panel-heading"><div><p class="eyebrow">COMMAND CIRCUIT</p><h3>Forward / reverse</h3></div><span class="tag">MEASURED mV</span></div>
+        <div class="panel-heading"><div><p class="eyebrow">COMMAND CIRCUIT</p><h3>Forward / reverse / pause</h3></div><span class="tag">MEASURED mV</span></div>
         <div class="chart-wrap"><svg id="neural-chart" viewBox="0 0 560 195" role="img" aria-label="Average forward and reverse command-neuron membrane voltages"></svg></div>
         <div class="legend"><span><i class="legend-forward"></i>AVB + PVC</span><span><i class="legend-reverse"></i>AVA + AVD + AVE</span></div>
-        <div class="scores"><div><span>FORWARD</span><strong id="forward-score">—</strong><progress id="forward-bar" max="1" value="0"></progress></div><div><span>REVERSE</span><strong id="reverse-score">—</strong><progress id="reverse-bar" max="1" value="0"></progress></div></div>
+        <div class="scores"><div><span>FORWARD · AVB/PVC</span><strong id="forward-score">—</strong><progress id="forward-bar" max="1" value="0"></progress></div><div><span>REVERSE · AVA/AVD/AVE</span><strong id="reverse-score">—</strong><progress id="reverse-bar" max="1" value="0"></progress></div><div><span>RIML / RIMR</span><strong id="rim-score">—</strong></div><div><span>RIBL / RIBR</span><strong id="rib-score">—</strong></div></div>
       </article>
 
-      <article class="panel sensory-panel"><div class="panel-heading"><div><p class="eyebrow">ENGINEERED INPUT</p><h3>Sensory stimulation</h3></div><span class="tag">0–5 pA</span></div><div id="sensory" class="sensory-grid"></div><p class="footnote">ASEL and ASER are distinct cells. Odor and avoidance inputs use bilateral pairs. These financial mappings are experimental choices.</p></article>
+      <article class="panel sensory-panel"><div class="panel-heading"><div><p class="eyebrow">ENGINEERED INPUT</p><h3>Sensory stimulation</h3></div><span class="tag">CALIBRATED pA</span></div><div id="sensory" class="sensory-grid"></div><p class="footnote">ASEL and ASER use published, per-cell synthetic salt-gradient transfer curves. Odor and avoidance inputs use bilateral pairs. These financial mappings remain experimental choices.</p></article>
       <article class="panel risk-panel"><div class="panel-heading"><div><p class="eyebrow">INDEPENDENT SAFETY</p><h3>Risk cage</h3></div><span id="risk-badge" class="tag">—</span></div><div id="risk-rules" class="risk-rules"></div><p id="execution-note" class="footnote">No live transaction path exists in this build.</p></article>
     </section>
 
     <section class="panel audit-panel"><div class="panel-heading"><div><p class="eyebrow">HASH-LINKED DECISION CHAIN</p><h3>Who made the decision?</h3></div><span id="audit-count" class="tag">0 EVENTS</span></div><div class="table-scroll"><table><thead><tr><th>TIME</th><th>BY WORM</th><th>BY RISK CAGE</th><th>BY PAPER EXECUTOR</th><th>EVENT HASH</th></tr></thead><tbody id="audit"></tbody></table></div></section>
 
     <section class="model-section" id="model">
-      <div><p class="eyebrow">WHAT IT IS</p><h2>A real model,<br>not a metaphor</h2><p>This laboratory uses c302’s C1 equations and its default historical connectivity reader. The sensory currents are engineered; the full selected network propagates them; a fixed readout compares named forward and reverse command neurons.</p><p>It does not recreate all of a living worm’s physiology. Synaptic parameters, financial inputs, and readout thresholds carry substantial modelling assumptions. Zero trades are a valid result.</p><a href="https://github.com/openworm/c302" target="_blank" rel="noopener noreferrer">Inspect upstream c302 ↗</a></div>
+      <div><p class="eyebrow">WHAT IT IS</p><h2>A real model,<br>not a metaphor</h2><p>This laboratory keeps c302’s C1 equations and uses the pinned Cook 2019 hermaphrodite reader from CECT. Calibrated sensory currents enter named cells; the generated network propagates them; a state machine decodes forward, reverse, and pause from public command-cell voltages.</p><p>The live worker applies one bounded ASE-to-AIA/AIY plastic gain between episodes and feeds paper fill or veto outcomes back through PVC/DVA-style currents. These are engineered experimental rules, not claims about a living worm’s financial intent.</p><a href="https://github.com/openworm/c302" target="_blank" rel="noopener noreferrer">Inspect upstream c302 ↗</a></div>
       <dl id="model-details"></dl>
     </section>
 

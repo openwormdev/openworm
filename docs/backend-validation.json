@@ -1,4 +1,6 @@
 {
+  "status": "legacy-reader-baseline",
+  "reader": "cect.readers.SpreadsheetDataReader",
   "scope": "60 ms transient and driven smoke comparison; 302 neurons, 18 observed",
   "reference": "jNeuroML interpreter",
   "export": "NEURON via official jNeuroML exporter",
