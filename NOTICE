@@ -1,0 +1,5 @@
+WormStreet uses the c302, NeuroML, and ConnectomeToolbox projects as dependencies.
+Upstream source and data provenance are documented in README.md and docs/model-card.md.
+Dependency code is not copied into this repository. Installed dependencies retain their own licenses and attribution.
+Bundled market observations are fictional. Bundled neural recordings are outputs of the declared c302 model.
+This application is an independent experiment; it does not imply endorsement by the upstream projects.

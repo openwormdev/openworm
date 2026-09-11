@@ -1,0 +1,12 @@
+{
+  "name": "wormstreet",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/web.test.mjs",
+    "check": "node --check web/app.js && node --check web/report.js && node scripts/privacy-check.mjs"
+  },
+  "engines": {"node": ">=22"}
+}

@@ -1,0 +1,5 @@
+[
+  {"tick":0,"seconds":0,"price":1.0,"flow":0.1,"liquidity":100000,"price_impact_bps":40,"fresh":true,"eligible":true},
+  {"tick":1,"seconds":15,"price":1.02,"flow":0.5,"liquidity":101000,"price_impact_bps":40,"fresh":true,"eligible":true},
+  {"tick":2,"seconds":30,"price":0.97,"flow":-0.5,"liquidity":99000,"price_impact_bps":60,"fresh":true,"eligible":true}
+]

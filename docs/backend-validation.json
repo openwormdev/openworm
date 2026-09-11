@@ -1,0 +1,83 @@
+{
+  "scope": "60 ms transient and driven smoke comparison; 302 neurons, 18 observed",
+  "reference": "jNeuroML interpreter",
+  "export": "NEURON via official jNeuroML exporter",
+  "dt_ms": 0.05,
+  "threshold_max_abs_mv": 1.0,
+  "errors": {
+    "AVBL": {
+      "max_abs_mv": 0.03700300000000567,
+      "rmse_mv": 0.024956019339421136
+    },
+    "AVBR": {
+      "max_abs_mv": 0.03727400000000358,
+      "rmse_mv": 0.02538581762367757
+    },
+    "PVCL": {
+      "max_abs_mv": 0.03745199999999471,
+      "rmse_mv": 0.025698499828736853
+    },
+    "PVCR": {
+      "max_abs_mv": 0.0397350000000003,
+      "rmse_mv": 0.02763458952796956
+    },
+    "AVAL": {
+      "max_abs_mv": 0.03909500000000321,
+      "rmse_mv": 0.026748727395483018
+    },
+    "AVAR": {
+      "max_abs_mv": 0.03889999999999816,
+      "rmse_mv": 0.026570049806103804
+    },
+    "AVDL": {
+      "max_abs_mv": 0.03697299999999615,
+      "rmse_mv": 0.024395160560011734
+    },
+    "AVDR": {
+      "max_abs_mv": 0.03705699999999723,
+      "rmse_mv": 0.024624724318295918
+    },
+    "AVEL": {
+      "max_abs_mv": 0.03689400000000376,
+      "rmse_mv": 0.02412162813869691
+    },
+    "AVER": {
+      "max_abs_mv": 0.03690600000000188,
+      "rmse_mv": 0.02426507036953051
+    },
+    "ASEL": {
+      "max_abs_mv": 0.1349000000000018,
+      "rmse_mv": 0.07684185153816668
+    },
+    "ASER": {
+      "max_abs_mv": 0.14898600000000073,
+      "rmse_mv": 0.07481440096395665
+    },
+    "AWAL": {
+      "max_abs_mv": 0.1339800000000011,
+      "rmse_mv": 0.07729755374548797
+    },
+    "AWAR": {
+      "max_abs_mv": 0.13407399999999825,
+      "rmse_mv": 0.0776447602881311
+    },
+    "AWCL": {
+      "max_abs_mv": 0.03690999999999889,
+      "rmse_mv": 0.02370605068745838
+    },
+    "AWCR": {
+      "max_abs_mv": 0.03690999999999889,
+      "rmse_mv": 0.024152114582413058
+    },
+    "ASHL": {
+      "max_abs_mv": 0.14415400000000034,
+      "rmse_mv": 0.07344003673986535
+    },
+    "ASHR": {
+      "max_abs_mv": 0.14468000000000103,
+      "rmse_mv": 0.07365816130867238
+    }
+  },
+  "passed": true,
+  "limitation": "Does not establish long-run or behavioral equivalence."
+}
