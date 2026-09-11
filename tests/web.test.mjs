@@ -58,6 +58,13 @@ test('all reference recordings have valid contracts and trusted file hashes',asy
     for(const field of ['config','policy']){const incomplete=structuredClone(r);delete incomplete[field];assert.throws(()=>validateReport(incomplete));}
     const invalidRisk=structuredClone(r);invalidRisk.rows[0].tick.fresh='true';assert.throws(()=>validateReport(invalidRisk));
   }
+  const liveRaw=await readFile('web/data/live-observer.json','utf8');
+  const live=validateLiveSnapshot(JSON.parse(liveRaw));
+  assert.equal(createHash('sha256').update(liveRaw).digest('hex'),manifest['live-observer']);
+  assert.equal(live.frames.length,3);assert.equal(live.live_execution,false);assert.ok(live.model.neurons>10);
+  assert.equal(live.model.reader,'cect.readers.Cook2019HermReader');assert.equal(live.plasticity_targets.length,7);
+  assert.ok(live.frames.some(frame=>Object.values(frame.stimulus_pa).some(value=>value>0)));
+  for(const field of ['observed_at','latest_trade_at','session_started_at','ready_at','updated_at','stopped_at'])assert.ok(!liveRaw.includes(field));
 });
 test('public page has controls and no third-party scripts or forms',async()=>{
   const html=await readFile('web/index.html','utf8');

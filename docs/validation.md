@@ -8,17 +8,18 @@ The reproducible checks target Python 3.12, Java 17, GCC/G++, Make, and Node 22 
 | JavaScript contracts, URL handling and recording integrity | 6 passed |
 | Current reader generation | Pinned Cook 2019 cache hash verified; generated 302 populations and 5,905 projections; all 22 requested readouts, all feedback targets, and seven existing ASE-to-AIA/AIY paths were present |
 | Decoder and paper loop | Unit tests cover forward/reverse/pause transitions, paper fills, vetoes, cooldown, latching kill switch, and unfilled exits without the legacy two-tick margin trigger |
-| Plasticity and feedback | Unit tests cover bounded depression/recovery and bounded PVC/DVA-style fill/veto feedback; native conductance mutation still requires the real integration gate |
+| Plasticity and feedback | Unit tests cover bounded depression/recovery and bounded PVC/DVA-style fill/veto feedback; the native continuous observer applied the requested named-path gains between ticks |
+| Continuous token observer | Native Linux/Java/NEURON workflow completed three linked ticks on the fixed WORMBRAIN token: 302 dynamically reported populations, 5,905 projections, 22 public voltages, seven plastic paths, nonzero live sensory currents, REVERSE → PAUSE → REVERSE states, and risk blocks for unverified liquidity/impact |
 | Bundled model runs | The three public recordings remain valid legacy-reader artifacts and are accepted as schema v1; they are not evidence for the new reader |
 | Backend comparison | The committed 18-cell comparison is explicitly labeled `legacy-reader-baseline`; it does not validate the current model identity |
-| Public build | Ten allowlisted assets; recording hashes checked before copying |
+| Public build | Eleven allowlisted assets; replay and continuous-observer hashes checked before copying |
 | Publication review | Privacy scan covers credentials, contact data, user paths, location clues, device metadata, analytics IDs and wall-clock timestamps; optional upstream donor labels are removed from model metadata |
 
 ## Live observer extension
 
-The current inexpensive suite passed 34 Python unit/API tests and 6 JavaScript tests. The expensive reference API test remains opt-in. The public build contains 10 allowlisted assets until a hash-pinned live observer artifact is added, plus the live observer controls.
+The current inexpensive suite passed 34 Python unit/API tests and 6 JavaScript tests. The expensive reference API test remains opt-in. The public build contains 11 allowlisted assets, including the hash-pinned continuous observer recording and live observer controls.
 
-An earlier live observer path was exercised end to end with the legacy-reader model. The new reader, RIM/RIB recordings, native ASE-family conductance mutation, and feedback inputs require a fresh Linux/Java/NEURON integration run before they are described as end-to-end validated.
+The Cook 2019 reader, RIM/RIB recordings, native ASE-family conductance mutation, and feedback inputs were exercised by the continuous Linux/Java/NEURON session. Its public artifact contains relative tick and biological time only. It is a real bounded observer run, not a claim of complete chain coverage or strategy performance.
 
 Exact market-event counts, prices, block heights, wall-clock timestamps, session hashes, and raw runtime exports are intentionally excluded from Git. Local reports contain only the requested token and quote contract addresses, with no trader accounts or raw transaction identifiers, and belong under the ignored `runs/` directory.
 
